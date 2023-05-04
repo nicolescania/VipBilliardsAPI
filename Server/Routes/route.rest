@@ -1,0 +1,13 @@
+GET http://localhost:3000/index
+
+###
+GET http://localhost:3000/index/5
+
+
+###
+POST http://localhost:3000/index
+Content-Type: application/json
+
+{
+    "name": "manager"
+}
