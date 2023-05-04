@@ -3,12 +3,12 @@
 import express from 'express';
 const router = express.Router();
 import Roles from '../Models/roles'
-
-//const Role = require('../Models/roles')
-
+import Users from '../Models/user'
 
 
-router.get('/', async (req, res, ) => {
+// Roles router
+
+router.get('/roles', async (req, res, ) => {
     try {
         const Role = await Roles.find()
         res.json(Role)
@@ -18,11 +18,8 @@ router.get('/', async (req, res, ) => {
 
 })
 
-router.get('/:Id', (req, res) => {
-res.send(req.params.Id)
-})
 
-router.post('/',async(req, res) => {
+router.post('/roles',async(req, res) => {
 
 const Role = new Roles ({
     name: req.body.name
@@ -37,6 +34,53 @@ try {
 
 
 })
+
+
+// User Router
+
+
+
+
+
+router.get('/users', async (req, res, ) => {
+    try {
+        const User = await Users.find()
+        res.json(User)
+    } catch (err) {
+        res.status(500).json({ message:err})
+    }
+
+})
+
+
+
+router.post('/users',async(req, res) => {
+
+const User = new Users({
+   username: req.body.username,
+   fisrtName: req.body.fisrtName,
+   lastName: req.body.lastName,
+   emailAddress: req.body.emailAddress,
+   password: req.body.password
+
+})
+try {
+    const newUser = await User.save()
+    res.status(201).json(newUser)
+} catch (err) {
+ res.status(400).json({message:err})
+}
+
+
+})
+
+
+
+
+
+
+
+
 
 router.patch('/', (req, res) => {
 

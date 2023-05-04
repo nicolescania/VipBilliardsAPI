@@ -13,10 +13,7 @@ const RoleSchema = new Schema
 
     name: {
         type: String,
-        require: true
-    }
-
-    
+        require: true   } 
   
 })
 /*

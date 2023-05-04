@@ -9,11 +9,11 @@ const UserSchema = new Schema
 ({
 
     id: Number,
-    username: String,
-    fisrtName: String,
-    lastName: String,
-    emailAddress: String,
-    password: String,
+    username: {type: String, require: true} ,
+    fisrtName: {type: String, require: true},
+    lastName: {type: String, require: true},
+    emailAddress: {type: String, require: true},
+    password: {type: String, require: true},
     role: { type: Schema.Types.ObjectId, ref: 'Roles' },
     Created: 
     {
