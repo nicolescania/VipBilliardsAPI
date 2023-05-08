@@ -31,12 +31,13 @@ import indexRouter from '../Routes/index';
 
 
 
+
 // create the application object - which is of type express
 const app = express();
 
 const rolesrouter = require('../Routes/index');
 app.use('/index', rolesrouter)
-'LocalHost:3000/'
+'LocalHost:8080/'
 
 
 const usersrouter = require('../Routes/index');
@@ -44,7 +45,11 @@ app.use('/index', usersrouter)
 'LocalHost:3000/index'
 
 // Complete the DB Connection Configuration
+
+
+
 import * as DBConfig from './db';
+
 mongoose.connect(DBConfig.LocalURI);
 const db = mongoose.connection; // alias for the mongoose connection
 
@@ -58,6 +63,11 @@ db.on("error", function()
 {
   console.error(`Connection Error`);
 });
+
+
+
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, '../Views'));
@@ -99,6 +109,7 @@ app.use(passport.session());
 app.use('/', indexRouter);
 
 
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
 {
@@ -120,7 +131,6 @@ app.use(function(err: createError.HttpError, req: express.Request, res: express.
 
 
 export default app;
-
 
 
 

@@ -5,6 +5,8 @@ const router = express.Router();
 import Roles from '../Models/roles'
 import Users from '../Models/user'
 
+const userController = require('../Controllers/users')
+
 
 // Roles router
 
@@ -40,39 +42,13 @@ try {
 
 
 
-
-
-router.get('/users', async (req, res, ) => {
-    try {
-        const User = await Users.find()
-        res.json(User)
-    } catch (err) {
-        res.status(500).json({ message:err})
-    }
-
-})
+router.get('/users', userController.list)
 
 
 
-router.post('/users',async(req, res) => {
 
-const User = new Users({
-   username: req.body.username,
-   fisrtName: req.body.fisrtName,
-   lastName: req.body.lastName,
-   emailAddress: req.body.emailAddress,
-   password: req.body.password
+router.post('/users', userController.create)
 
-})
-try {
-    const newUser = await User.save()
-    res.status(201).json(newUser)
-} catch (err) {
- res.status(400).json({message:err})
-}
-
-
-})
 
 
 

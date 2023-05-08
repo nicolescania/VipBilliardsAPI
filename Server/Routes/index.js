@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const roles_1 = __importDefault(require("../Models/roles"));
-const user_1 = __importDefault(require("../Models/user"));
+const userController = require('../Controllers/users');
 router.get('/roles', async (req, res) => {
     try {
         const Role = await roles_1.default.find();
@@ -28,31 +28,8 @@ router.post('/roles', async (req, res) => {
         res.status(400).json({ message: err });
     }
 });
-router.get('/users', async (req, res) => {
-    try {
-        const User = await user_1.default.find();
-        res.json(User);
-    }
-    catch (err) {
-        res.status(500).json({ message: err });
-    }
-});
-router.post('/users', async (req, res) => {
-    const User = new user_1.default({
-        username: req.body.username,
-        fisrtName: req.body.fisrtName,
-        lastName: req.body.lastName,
-        emailAddress: req.body.emailAddress,
-        password: req.body.password
-    });
-    try {
-        const newUser = await User.save();
-        res.status(201).json(newUser);
-    }
-    catch (err) {
-        res.status(400).json({ message: err });
-    }
-});
+router.get('/users', userController.list);
+router.post('/users', userController.create);
 router.patch('/', (req, res) => {
 });
 router.delete('/', (req, res) => {
