@@ -44,9 +44,6 @@ try {
 
 router.get('/users', userController.list)
 
-
-
-
 router.post('/users', userController.create)
 
 

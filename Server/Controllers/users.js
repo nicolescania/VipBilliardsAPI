@@ -34,7 +34,8 @@ async function save(userInfo) {
             fisrtName: userInfo.fisrtName,
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
-            password: userInfo.password
+            password: userInfo.password,
+            role: userInfo.Roles
         });
         const newUser = await User.save();
         return true;
