@@ -2,8 +2,6 @@ import express from "express";
 
 import mongoose from 'mongoose';
 
-import { CallbackError } from "mongoose";
-
 import Users from '../Models/user'
 
 import open from '../Config/app'
@@ -14,7 +12,7 @@ import open from '../Config/app'
 
 
 
- async function list(req, res)  {
+ async function list(req : any, res: any)  {
 
     try {
         const User = await Users.find()
@@ -26,62 +24,69 @@ import open from '../Config/app'
 }
 
    
-    /*
+   
 
 
- async function verify(emailAddress){
+ async function verifyEmail(emailAddress){
 
 
     const verifyEmail = await Users.findOne({emailAddress: { $eq: emailAddress }})
 
 	return verifyEmail == null ? false : true;
 }
+ 
 
-
-
-
- async function create() {
+ async function create(req : any, res: any) {
     
+    //res.status(200).json(req.body)
 
-    if (verify() == true) {
+    if ( await verifyEmail(req.body.emailAddress) == true) {
 
-    return "El email ya existe";
-       }else{
-    save();
+        return res.status(400).json("Email exist")
+       } else  { 
+            if ( await save(req.body) == true) {
+               return res.status(201).json("user created")
+            } 
+              return res.status(400).json("user no created")   
+             
+
 }
 
 }
 
 
-
-
-async function save(req, res) {
+async function save(userInfo: any) {
             
-      
-const User = new Users({
+            try {
+
+
+                const User = new Users({
  
-    fisrtName: req.body.fisrtName,
-    lastName: req.body.lastName,
-    emailAddress: req.body.emailAddress,
-    password: req.body.password
+                    fisrtName: userInfo.fisrtName,
+                    lastName: userInfo.lastName,
+                    emailAddress: userInfo.emailAddress,
+                    password: userInfo.password
+                 
+                 })
+            
+            const newUser = await User.save()
+
+            return true
+
+            } catch (err) {
+            return false
+            }
  
- })
- try {
-      
-     const newUser = await User.save()
-     res.status(201).json(newUser)
- } catch (err) {
-  res.status(400).json({message:err})
  }
- 
- 
- }
 
 
 
 
 
 
-*/
 
-module.exports = {list, save};
+module.exports = {list, create};
+
+
+
+
