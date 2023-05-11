@@ -54,12 +54,11 @@ import { error } from "console";
     // SAVE USER INFO
 
     async function save(userInfo: any) {
-                
+   
                 try {
 
 
                     const User = new Users({
-    
                         fisrtName: userInfo.fisrtName,
                         lastName: userInfo.lastName,
                         emailAddress: userInfo.emailAddress,

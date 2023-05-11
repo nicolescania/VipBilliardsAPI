@@ -35,8 +35,9 @@ router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
 });
 router.delete('/:id', getUser, async (req, res) => {
+    let id = req.params.id;
     try {
-        await res.user.remove();
+        await res.user.deleteOne({ id });
         res.json({ message: 'deleted user' });
     }
     catch (err) {

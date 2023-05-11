@@ -4,6 +4,7 @@ import express from 'express';
 const router = express.Router();
 import Roles from '../Models/roles'
 import Users from '../Models/user'
+import user from '../Models/user';
 
 const userController = require('../Controllers/users')
 
@@ -49,17 +50,17 @@ router.post('/users', userController.create)
 
 
 
-
-
 router.get('/:id', getUser, (req: any, res: any) => {
     res.json(res.user)
 
 })
 
 router.delete('/:id', getUser, async (req: any, res: any) => {
+    let id = req.params.id;
 
     try {
-         await res.user.remove()
+
+         await res.user.deleteOne({id})
          res.json({message: 'deleted user'})
     } catch (err) {
 
@@ -67,6 +68,11 @@ router.delete('/:id', getUser, async (req: any, res: any) => {
 
     }
 })
+
+
+
+
+
 
 
  async function getUser(req: any, res: any, next: any) {
