@@ -48,32 +48,52 @@ router.get('/users', userController.list)
 router.post('/users', userController.create)
 
 
+            //MILDWARE
+
+        router.get('/:id', getUser, (req: any, res: any) => {
+            res.json(res.user)
+
+        })
+
+            //DEETE USER
+
+        router.delete('/:id', getUser, async (req: any, res: any) => {
+            let id = req.params.id;
+
+            try {
+
+                await res.user.deleteOne({id})
+                res.json({message: 'deleted user'})
+            } catch (err) {
+
+                res.status(500).json({message: err})
+
+            }
+        })
 
 
-router.get('/:id', getUser, (req: any, res: any) => {
-    res.json(res.user)
 
-})
+        //UPDATE USER
 
-router.delete('/:id', getUser, async (req: any, res: any) => {
-    let id = req.params.id;
+        router.patch('/:id', getUser, async (req: any, res: any) => {
+            if (req.body.fisrtName != null) {
 
-    try {
+            res.user.fisrtName = req.body.fisrtName
 
-         await res.user.deleteOne({id})
-         res.json({message: 'deleted user'})
-    } catch (err) {
+            try {
 
-        res.status(500).json({message: err})
+                const updateUser = await res.user.save()
+                res.json(updateUser)
+                
+            } catch (error) {
+                res.status(400).json({message: error})
+                
+            }
 
-    }
-})
-
-
-
+            }
 
 
-
+        })
 
  async function getUser(req: any, res: any, next: any) {
     let user

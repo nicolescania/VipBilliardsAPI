@@ -44,6 +44,18 @@ router.delete('/:id', getUser, async (req, res) => {
         res.status(500).json({ message: err });
     }
 });
+router.patch('/:id', getUser, async (req, res) => {
+    if (req.body.fisrtName != null) {
+        res.user.fisrtName = req.body.fisrtName;
+        try {
+            const updateUser = await res.user.save();
+            res.json(updateUser);
+        }
+        catch (error) {
+            res.status(400).json({ message: error });
+        }
+    }
+});
 async function getUser(req, res, next) {
     let user;
     try {
