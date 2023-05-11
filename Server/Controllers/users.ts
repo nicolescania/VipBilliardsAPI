@@ -1,8 +1,7 @@
 import express from "express";
 import Users from '../Models/user'
-
-
-
+import Roles from '../Models/roles'
+import { error } from "console";
 
 
 
@@ -47,7 +46,6 @@ import Users from '../Models/user'
                         return res.status(201).json("user created")
                         } 
                         return res.status(400).json("user no created")   
-                    
 
                             }
 
@@ -66,8 +64,7 @@ import Users from '../Models/user'
                         lastName: userInfo.lastName,
                         emailAddress: userInfo.emailAddress,
                         password: userInfo.password,
-                        role: userInfo.Roles
-                    
+                        //role: userInfo.populate('Roles')                                        
                     })
                 
                 const newUser = await User.save()
@@ -81,6 +78,13 @@ import Users from '../Models/user'
     }
 
 
+
+  // UPDATE USER
+
+
+
+ 
+   
 
 
 

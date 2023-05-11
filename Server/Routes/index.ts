@@ -51,21 +51,45 @@ router.post('/users', userController.create)
 
 
 
-
-
-
-
-router.patch('/', (req, res) => {
+router.get('/:id', getUser, (req: any, res: any) => {
+    res.json(res.user)
 
 })
 
-router.delete('/', (req, res) => {
+router.delete('/:id', getUser, async (req: any, res: any) => {
 
+    try {
+         await res.user.remove()
+         res.json({message: 'deleted user'})
+    } catch (err) {
+
+        res.status(500).json({message: err})
+
+    }
 })
 
 
+ async function getUser(req: any, res: any, next: any) {
+    let user
+    try { 
+        user = await Users.findById(req.params.id)
+
+        if (user == null) {
+            return res.status(404).json({message: 'Can not find user'}
+            )
+        }
+
+    } catch (err) {
+
+        return  res.status(500).json({message: err})
+
+    }
 
 
+    res.user = user;
+    next()
+
+}
 
 
 

@@ -1,7 +1,7 @@
-GET http://localhost:3000/index
+GET http://localhost:3000/users
 
 ###
-GET http://localhost:3000/index/5
+GET http://localhost:3000/index/645b099955be2ea01c14e7f7
 
 
 ###
@@ -11,3 +11,7 @@ Content-Type: application/json
 {
     "name": "manager"
 }
+
+###
+
+DELETE http://localhost:3000/localhost:3000/645b099955be2ea01c14e7f7

@@ -1,19 +1,26 @@
 // Step 1 - import mongoose - database adapter
 import mongoose, { PassportLocalModel, PassportLocalSchema } from 'mongoose';
 import Roles from './roles';
+
 const Schema = mongoose.Schema; // alias for mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose';
 
+
+
+
+
+
 // Step 2 - Create a Schema that matches the data in the collection
-const UserSchema = new Schema
+const UserSchema = new Schema 
 ({
 
- 
     fisrtName: {type: String, require: true},
     lastName: {type: String, require: true},
     emailAddress: {type: String, require: true},
     password: {type: String, require: true},
-    role: { type: Schema.Types.ObjectId, ref: 'Roles' },
+    //role: { type: Schema.Types.ObjectId, ref: 'Roles' },
+
+
     Created: 
     {
         type: Date,
@@ -24,11 +31,20 @@ const UserSchema = new Schema
         type: Date,
         default: Date.now()
     }
+    
 })
 
 
 
-
+declare global
+{
+    export type UserDocument = mongoose.Document &
+    {
+        fisrtName: String,
+        EmailAddress: String,
+     
+    }
+}
 
 
 

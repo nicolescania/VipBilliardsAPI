@@ -10,7 +10,6 @@ const UserSchema = new Schema({
     lastName: { type: String, require: true },
     emailAddress: { type: String, require: true },
     password: { type: String, require: true },
-    role: { type: Schema.Types.ObjectId, ref: 'Roles' },
     Created: {
         type: Date,
         default: Date.now()
