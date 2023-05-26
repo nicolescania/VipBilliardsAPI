@@ -15,3 +15,7 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3000/645c55052cfe5e35e8b2ddeb
+
+
+###
+PATCH http://localhost:3000/645c55052cfe5e35e8b2ddeb

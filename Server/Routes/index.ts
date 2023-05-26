@@ -95,27 +95,27 @@ router.post('/users', userController.create)
 
         })
 
- async function getUser(req: any, res: any, next: any) {
-    let user
-    try { 
-        user = await Users.findById(req.params.id)
+           async function getUser(req: any, res: any, next: any) {
+            let user
+            try { 
+                user = await Users.findById(req.params.id)
 
-        if (user == null) {
-            return res.status(404).json({message: 'Can not find user'}
-            )
+                if (user == null) {
+                    return res.status(404).json({message: 'Can not find user'}
+                    )
+                }
+
+            } catch (err) {
+
+                return  res.status(500).json({message: err})
+
+            }
+
+
+            res.user = user;
+            next()
+
         }
-
-    } catch (err) {
-
-        return  res.status(500).json({message: err})
-
-    }
-
-
-    res.user = user;
-    next()
-
-}
 
 
 
