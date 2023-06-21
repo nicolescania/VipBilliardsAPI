@@ -118,15 +118,17 @@ router.post('/users', userController.create)
         }
 
 
-
-//import { DisplayHomePage } from '../Controllers/index';
-
-/* Display home page. */
-//router.get('/', DisplayHomePage);
-
-/* Display home page. */
-//router.get('/home', DisplayHomePage);
-
+        function DisplayHomePage(req: express.Request, res:express.Response, next:express.NextFunction)
+        {
+            res.render('index', { title: 'Home', page: 'home'});
+        }
+        
+        
+        
+        /* GET home page. */
+        router.get('/', DisplayHomePage);
+        router.get('/home', DisplayHomePage);
+        router.get('/index', DisplayHomePage);
 
 module.exports = router
 

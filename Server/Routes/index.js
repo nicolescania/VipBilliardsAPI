@@ -70,6 +70,12 @@ async function getUser(req, res, next) {
     res.user = user;
     next();
 }
+function DisplayHomePage(req, res, next) {
+    res.render('index', { title: 'Home', page: 'home' });
+}
+router.get('/', DisplayHomePage);
+router.get('/home', DisplayHomePage);
+router.get('/index', DisplayHomePage);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=index.js.map

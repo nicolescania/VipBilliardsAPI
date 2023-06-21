@@ -37,12 +37,12 @@ const app = express();
 
 const rolesrouter = require('../Routes/index');
 app.use('/index', rolesrouter)
-'LocalHost:8080/'
+'LocalHost:5080/'
 
 
 const usersrouter = require('../Routes/index');
 app.use('/index', usersrouter)
-'LocalHost:3000/index'
+'LocalHost:5000/index'
 
 // Complete the DB Connection Configuration
 
