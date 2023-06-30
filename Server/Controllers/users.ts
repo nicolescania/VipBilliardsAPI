@@ -59,8 +59,6 @@ async function create(req: any, res: any) {
 async function save(userInfo: any,) {
 
     try {
-
-
         const User = new Users({
 
             fisrtName: userInfo.fisrtName,
@@ -90,14 +88,38 @@ async function findRole(id: any) {
 
 }
 
+async function userInfo(req: any, userinfo: any) {
+    let user
+
+    try {
+
+        user = await Users.findOne({ emailAddress: req.body.emailAddress })
+        return ({
+            Name: userinfo.fisrtName,
+            lastName: userinfo.lastName,
+            Email: userinfo.emailAddress,
+            role: await findRole(userinfo.role),
+
+
+
+        })
+
+    } catch (error) {
+
+    }
+
+
+}
+
 
 
 
 async function login(req: any, res: any) {
 
 
-
-    await Users.findOne({ emailAddress: req.body.emailAddress })
+  
+        await Users.findOne({ emailAddress: req.body.emailAddress })
+      
         .then(user => {
 
             if (user) {
@@ -110,15 +132,10 @@ async function login(req: any, res: any) {
                     if (result) {
 
                         let token = jwt.sign({ name: user.fisrtName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' })
-                        //findRole(user.role)
+
                         return res.json({
                             message: 'Login Successful!',
-                            Name: user.fisrtName,
-                            lastName: user.lastName,
-                            Email: user.emailAddress,
-                            role: await findRole(user.role),
-
-
+                            user: await userInfo(req, user),
                             token
                         })
 
@@ -202,5 +219,23 @@ async function deleteUser(req: any, res: any) {
 
 module.exports = { list, create, login, getUser, updateUser, deleteUser };
 
+/*
+async function login(req: any, res: any, fisrtName:String) {
+  
+    
+    try {
+        const user = await Users.findOne({ fisrtName: req.body.fisrtName });
+        if (!user) {
+          // If no user is found, return an appropriate response
+          return res.status(404).json({ message: 'User not found' });
+        }
+        // If a user is found, return it in the response
+        res.json(user);
+      } catch (err) {
+        res.status(500).json({ message: err });
+      }
+      
+}
 
+*/
 

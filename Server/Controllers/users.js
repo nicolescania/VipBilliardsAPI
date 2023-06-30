@@ -50,6 +50,20 @@ async function save(userInfo) {
 async function findRole(id) {
     return await roles_1.default.findById(id);
 }
+async function userInfo(req, userinfo) {
+    let user;
+    try {
+        user = await user_1.default.findOne({ emailAddress: req.body.emailAddress });
+        return ({
+            Name: userinfo.fisrtName,
+            lastName: userinfo.lastName,
+            Email: userinfo.emailAddress,
+            role: await findRole(userinfo.role),
+        });
+    }
+    catch (error) {
+    }
+}
 async function login(req, res) {
     await user_1.default.findOne({ emailAddress: req.body.emailAddress })
         .then(user => {
@@ -64,10 +78,7 @@ async function login(req, res) {
                     let token = jsonwebtoken_1.default.sign({ name: user.fisrtName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
                     return res.json({
                         message: 'Login Successful!',
-                        Name: user.fisrtName,
-                        lastName: user.lastName,
-                        Email: user.emailAddress,
-                        role: await findRole(user.role),
+                        user: await userInfo(req, user),
                         token
                     });
                 }
