@@ -37,20 +37,20 @@ const app = express();
 
 const rolesrouter = require('../Routes/index');
 app.use('/index', rolesrouter)
-'LocalHost:5080/'
+'LocalHost:5000/'
 
 
 const usersrouter = require('../Routes/index');
 app.use('/index', usersrouter)
-'LocalHost:5000/index'
+
 
 // Complete the DB Connection Configuration
 
 
 
-import * as DBConfig from './db';
+import * as DBConfig from './db'
 
-mongoose.connect(DBConfig.LocalURI);
+mongoose.connect(DBConfig.RemoteURI);
 const db = mongoose.connection; // alias for the mongoose connection
 
 // Listen for Connections or Errors

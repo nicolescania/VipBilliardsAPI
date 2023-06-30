@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import Roles from './roles';
 import bcrypt from 'bcrypt';
 
+
 ///const Schema = mongoose.Schema; // alias for mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose';
 
@@ -12,7 +13,8 @@ interface IUser extends Document {
     fisrtName: String;
     lastName: String;
     emailAddress: String;
-    password: string
+    password: string;
+    role: mongoose.Types.ObjectId;
 
 
 
@@ -27,6 +29,7 @@ const UserSchema: Schema<IUser> = new Schema
     lastName: {type: String, require: true},
     emailAddress: {type: String, require: true},
     password: {type: String, require: true},
+    role: { type: Schema.Types.ObjectId, ref: 'Roles', required: true }
     //role: { type: Schema.Types.ObjectId, ref: 'Roles' },
 
 
@@ -35,7 +38,7 @@ const UserSchema: Schema<IUser> = new Schema
 
 
 
-UserSchema.pre<IUser>('save', function (next) {
+  UserSchema.pre<IUser>('save', function (next) {
     // Only hash the password if it has been modified (or is new)
     if (!this.isModified('password')) {
       return next();

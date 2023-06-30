@@ -9,7 +9,7 @@
     "start": "node server.js"
   },
   "engines": {
-    "node": "19.4.0",
+    "node": "20.3.0",
     "npm": "9.2.0",
     "yarn": "1.22.19"
   },
@@ -33,6 +33,7 @@
     "express-session": "^1.17.3",
     "http-error": "^0.0.6",
     "jquery": "^3.6.4",
+    "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
@@ -47,6 +48,7 @@
     "@types/express-session": "^1.17.7",
     "@types/http-errors": "^2.0.1",
     "@types/jquery": "^3.5.16",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.16.1"
   },

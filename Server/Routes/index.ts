@@ -4,36 +4,38 @@ import express from 'express';
 const router = express.Router();
 import Roles from '../Models/roles'
 import Users from '../Models/user'
-import user from '../Models/user';
+
+
 
 const userController = require('../Controllers/users')
 
 
 // Roles router
 
-router.get('/roles', async (req, res, ) => {
+router.get('/roles', async (req, res,) => {
     try {
         const Role = await Roles.find()
         res.json(Role)
     } catch (err) {
-        res.status(500).json({ message:err})
+        res.status(500).json({ message: err })
     }
 
 })
 
 
-router.post('/roles',async(req, res) => {
+router.post('/roles', async (req, res) => {
 
-const Role = new Roles ({
-    name: req.body.name
+    const Role = new Roles({
+        name: req.body.name
+     
 
-})
-try {
-    const newRole = await Role.save()
-    res.status(201).json(newRole)
-} catch (err) {
- res.status(400).json({message:err})
-}
+    })
+    try {
+        const newRole = await Role.save()
+        res.status(201).json(newRole)
+    } catch (err) {
+        res.status(400).json({ message: err })
+    }
 
 
 })
@@ -46,89 +48,89 @@ try {
 router.get('/users', userController.list)
 
 router.post('/users', userController.create)
+router.post('/login', userController.login)
 
 
-            //MILDWARE
+//MILDWARE
 
-        router.get('/:id', getUser, (req: any, res: any) => {
-            res.json(res.user)
+router.get('/:id', getUser, (req: any, res: any) => {
+    res.json(res.user)
 
-        })
+})
 
-            //DEETE USER
+//DEETE USER
 
-        router.delete('/:id', getUser, async (req: any, res: any) => {
-            let id = req.params.id;
+router.delete('/:id', getUser, async (req: any, res: any) => {
+    let id = req.params.id;
 
-            try {
+    try {
 
-                await res.user.deleteOne({id})
-                res.json({message: 'deleted user'})
-            } catch (err) {
+        await res.user.deleteOne({ id })
+        res.json({ message: 'deleted user' })
+    } catch (err) {
 
-                res.status(500).json({message: err})
+        res.status(500).json({ message: err })
 
-            }
-        })
-
-
-
-        //UPDATE USER
-
-        router.patch('/:id', getUser, async (req: any, res: any) => {
-            if (req.body.fisrtName != null) {
-
-            res.user.fisrtName = req.body.fisrtName
-
-            try {
-
-                const updateUser = await res.user.save()
-                res.json(updateUser)
-                
-            } catch (error) {
-                res.status(400).json({message: error})
-                
-            }
-
-            }
+    }
+})
 
 
-        })
 
-           async function getUser(req: any, res: any, next: any) {
-            let user
-            try { 
-                user = await Users.findById(req.params.id)
+//UPDATE USER
 
-                if (user == null) {
-                    return res.status(404).json({message: 'Can not find user'}
-                    )
-                }
+router.patch('/:id', getUser, async (req: any, res: any) => {
+    if (req.body.fisrtName != null) {
 
-            } catch (err) {
+        res.user.fisrtName = req.body.fisrtName
 
-                return  res.status(500).json({message: err})
+        try {
 
-            }
+            const updateUser = await res.user.save()
+            res.json(updateUser)
 
-
-            res.user = user;
-            next()
+        } catch (error) {
+            res.status(400).json({ message: error })
 
         }
 
+    }
 
-        function DisplayHomePage(req: express.Request, res:express.Response, next:express.NextFunction)
-        {
-            res.render('index', { title: 'Home', page: 'home'});
+
+})
+
+async function getUser(req: any, res: any, next: any) {
+    let user
+    try {
+        user = await Users.findById(req.params.id)
+
+        if (user == null) {
+            return res.status(404).json({ message: 'Can not find user' }
+            )
         }
-        
-        
-        
-        /* GET home page. */
-        router.get('/', DisplayHomePage);
-        router.get('/home', DisplayHomePage);
-        router.get('/index', DisplayHomePage);
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+
+    res.user = user;
+    next()
+
+}
+
+
+function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {
+    res.render('index', { title: 'Home', page: 'home' });
+}
+
+
+
+/* GET home page. */
+router.get('/', DisplayHomePage);
+router.get('/home', DisplayHomePage);
+router.get('/index', DisplayHomePage);
 
 module.exports = router
 

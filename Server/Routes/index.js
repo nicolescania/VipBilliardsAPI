@@ -31,6 +31,7 @@ router.post('/roles', async (req, res) => {
 });
 router.get('/users', userController.list);
 router.post('/users', userController.create);
+router.post('/login', userController.login);
 router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
 });
