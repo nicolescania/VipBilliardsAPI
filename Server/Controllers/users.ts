@@ -30,7 +30,7 @@ async function list(req: any, res: any) {
 async function verifyEmail(emailAddress: String) {
 
 
-    const verifyEmail = await Users.findOne({ emailAddress: { $eq: emailAddress }})
+    const verifyEmail = await Users.findOne({ emailAddress: { $eq: emailAddress } })
 
     return verifyEmail == null ? false : true;
 }
@@ -59,17 +59,17 @@ async function create(req: any, res: any) {
 async function save(userInfo: any,) {
 
     try {
-        
-     
+
+
         const User = new Users({
-            
+
             fisrtName: userInfo.fisrtName,
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
             password: userInfo.password,
             role: userInfo.role
 
-                                               
+
         })
 
         const newUser = await User.save()
@@ -83,10 +83,10 @@ async function save(userInfo: any,) {
 
 }
 
-async function findRole( id:any){
-    
-    return  await  Roles.findById(id)
-    
+async function findRole(id: any) {
+
+    return await Roles.findById(id)
+
 
 }
 
@@ -95,74 +95,112 @@ async function findRole( id:any){
 
 async function login(req: any, res: any) {
 
-  
+
 
     await Users.findOne({ emailAddress: req.body.emailAddress })
-    .then (user =>{
+        .then(user => {
 
-        if (user){
-            bcrypt.compare(req.body.password, user.password, async function(err, result){
-                if(err) {
-                    return res.json({
-                        error:err
-                    })
-                }
-                if (result){
+            if (user) {
+                bcrypt.compare(req.body.password, user.password, async function (err, result) {
+                    if (err) {
+                        return res.json({
+                            error: err
+                        })
+                    }
+                    if (result) {
 
-                    let token = jwt.sign({name: user.fisrtName, lastName:user.lastName, email: user.emailAddress,  }, 'VerySecretValue', {expiresIn:'1h'})
-                    //findRole(user.role)
-                    return res.json({
-                        message: 'Login Successful!',
-                        Name: user.fisrtName,
-                        lastName: user.lastName,
-                        Email: user.emailAddress,
-                        role: await findRole(user.role),
+                        let token = jwt.sign({ name: user.fisrtName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' })
+                        //findRole(user.role)
+                        return res.json({
+                            message: 'Login Successful!',
+                            Name: user.fisrtName,
+                            lastName: user.lastName,
+                            Email: user.emailAddress,
+                            role: await findRole(user.role),
 
-                        
-                        token
-                    })
 
-                }else {
-                    return res.json({
-                        message: 'Password does not matched'
-                    })
-                }
-            })
-        }else{
-            return res.json({
-                message: 'No user found!'
-            })
-        }
-    })
+                            token
+                        })
 
-  
+                    } else {
+                        return res.json({
+                            message: 'Password does not matched'
+                        })
+                    }
+                })
+            } else {
+                return res.json({
+                    message: 'No user found!'
+                })
+            }
+        })
+
+
 }
 
-
-
-/*
-
-async function login(req: any, res: any, fisrtName:String) {
-
-  
-    
+async function getUser(req: any, res: any, next: any) {
+    let user
     try {
-        const user = await Users.findOne({ fisrtName: req.body.fisrtName });
-        if (!user) {
-          // If no user is found, return an appropriate response
-          return res.status(404).json({ message: 'User not found' });
+        user = await Users.findById(req.params.id)
+
+        if (user == null) {
+            return res.status(404).json({ message: 'Can not find user' }
+            )
         }
-        // If a user is found, return it in the response
-        res.json(user);
-      } catch (err) {
-        res.status(500).json({ message: err });
-      }
-      
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+
+    res.user = user;
+    next()
 
 }
-*/
 
-module.exports = { list, create, login };
+
+
+async function updateUser(req: any, res: any) {
+    if (req.body.fisrtName != null) {
+
+        res.user.fisrtName = req.body.fisrtName
+
+        try {
+
+            const updateUser = await res.user.save()
+            res.json(updateUser)
+
+        } catch (error) {
+            res.status(400).json({ message: error })
+
+        }
+
+    }
+
+}
+
+
+async function deleteUser(req: any, res: any) {
+    let id = req.params.id;
+
+    try {
+
+        await res.user.deleteOne({ id })
+        res.json({ message: 'deleted user' })
+    } catch (err) {
+
+        res.status(500).json({ message: err })
+
+    }
+}
+
+
+
+
+
+module.exports = { list, create, login, getUser, updateUser, deleteUser };
 
 
 

@@ -44,22 +44,32 @@ router.post('/roles', async (req, res) => {
 // User Router
 
 
-
+// GET USER LIST
 router.get('/users', userController.list)
 
+//CREATE A NEW USER
 router.post('/users', userController.create)
+
+// LOGIN USER
 router.post('/login', userController.login)
 
 
 //MILDWARE
 
-router.get('/:id', getUser, (req: any, res: any) => {
+router.get('/:id',userController.getUser, (req: any, res: any) => {
     res.json(res.user)
 
 })
 
+//UPDATE USER
+
+router.patch('/:id', userController.getUser, userController.updateUser )
+
 //DEETE USER
 
+router.delete('/:id', userController.getUser, userController.deleteUser )
+
+/*
 router.delete('/:id', getUser, async (req: any, res: any) => {
     let id = req.params.id;
 
@@ -98,28 +108,7 @@ router.patch('/:id', getUser, async (req: any, res: any) => {
 
 })
 
-async function getUser(req: any, res: any, next: any) {
-    let user
-    try {
-        user = await Users.findById(req.params.id)
-
-        if (user == null) {
-            return res.status(404).json({ message: 'Can not find user' }
-            )
-        }
-
-    } catch (err) {
-
-        return res.status(500).json({ message: err })
-
-    }
-
-
-    res.user = user;
-    next()
-
-}
-
+*/
 
 function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {
     res.render('index', { title: 'Home', page: 'home' });

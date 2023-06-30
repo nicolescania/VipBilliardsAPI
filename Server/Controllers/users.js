@@ -85,5 +85,41 @@ async function login(req, res) {
         }
     });
 }
-module.exports = { list, create, login };
+async function getUser(req, res, next) {
+    let user;
+    try {
+        user = await user_1.default.findById(req.params.id);
+        if (user == null) {
+            return res.status(404).json({ message: 'Can not find user' });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    res.user = user;
+    next();
+}
+async function updateUser(req, res) {
+    if (req.body.fisrtName != null) {
+        res.user.fisrtName = req.body.fisrtName;
+        try {
+            const updateUser = await res.user.save();
+            res.json(updateUser);
+        }
+        catch (error) {
+            res.status(400).json({ message: error });
+        }
+    }
+}
+async function deleteUser(req, res) {
+    let id = req.params.id;
+    try {
+        await res.user.deleteOne({ id });
+        res.json({ message: 'deleted user' });
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+module.exports = { list, create, login, getUser, updateUser, deleteUser };
 //# sourceMappingURL=users.js.map
