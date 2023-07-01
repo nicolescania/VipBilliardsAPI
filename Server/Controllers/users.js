@@ -106,7 +106,7 @@ async function getUser(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    res.user = user;
+    res.user = await userInfo(req, user);
     next();
 }
 async function updateUser(req, res) {

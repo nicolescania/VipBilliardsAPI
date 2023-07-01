@@ -69,46 +69,7 @@ router.patch('/:id', userController.getUser, userController.updateUser )
 
 router.delete('/:id', userController.getUser, userController.deleteUser )
 
-/*
-router.delete('/:id', getUser, async (req: any, res: any) => {
-    let id = req.params.id;
 
-    try {
-
-        await res.user.deleteOne({ id })
-        res.json({ message: 'deleted user' })
-    } catch (err) {
-
-        res.status(500).json({ message: err })
-
-    }
-})
-
-
-
-//UPDATE USER
-
-router.patch('/:id', getUser, async (req: any, res: any) => {
-    if (req.body.fisrtName != null) {
-
-        res.user.fisrtName = req.body.fisrtName
-
-        try {
-
-            const updateUser = await res.user.save()
-            res.json(updateUser)
-
-        } catch (error) {
-            res.status(400).json({ message: error })
-
-        }
-
-    }
-
-
-})
-
-*/
 
 function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {
     res.render('index', { title: 'Home', page: 'home' });

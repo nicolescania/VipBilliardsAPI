@@ -93,7 +93,7 @@ async function userInfo(req: any, userinfo: any) {
 
     try {
 
-       // user = await Users.findOne({ emailAddress: req.body.emailAddress })
+
         return ({
             Name: userinfo.fisrtName,
             lastName: userinfo.lastName,
@@ -159,6 +159,7 @@ async function getUser(req: any, res: any, next: any) {
     try {
         user = await Users.findById(req.params.id)
 
+
         if (user == null) {
             return res.status(404).json({ message: 'Can not find user' }
             )
@@ -171,7 +172,7 @@ async function getUser(req: any, res: any, next: any) {
     }
 
 
-    res.user = user;
+    res.user =  await userInfo(req, user)
     next()
 
 }
@@ -218,23 +219,5 @@ async function deleteUser(req: any, res: any) {
 
 module.exports = { list, create, login, getUser, updateUser, deleteUser };
 
-/*
-async function login(req: any, res: any, fisrtName:String) {
-  
-    
-    try {
-        const user = await Users.findOne({ fisrtName: req.body.fisrtName });
-        if (!user) {
-          // If no user is found, return an appropriate response
-          return res.status(404).json({ message: 'User not found' });
-        }
-        // If a user is found, return it in the response
-        res.json(user);
-      } catch (err) {
-        res.status(500).json({ message: err });
-      }
-      
-}
 
-*/
 
