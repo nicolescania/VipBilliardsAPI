@@ -93,7 +93,7 @@ async function userInfo(req: any, userinfo: any) {
 
     try {
 
-        user = await Users.findOne({ emailAddress: req.body.emailAddress })
+       // user = await Users.findOne({ emailAddress: req.body.emailAddress })
         return ({
             Name: userinfo.fisrtName,
             lastName: userinfo.lastName,
@@ -118,8 +118,7 @@ async function login(req: any, res: any) {
 
 
   
-        await Users.findOne({ emailAddress: req.body.emailAddress })
-      
+        await Users.findOne({ emailAddress: req.body.emailAddress })  
         .then(user => {
 
             if (user) {

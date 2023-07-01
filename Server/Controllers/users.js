@@ -53,7 +53,6 @@ async function findRole(id) {
 async function userInfo(req, userinfo) {
     let user;
     try {
-        user = await user_1.default.findOne({ emailAddress: req.body.emailAddress });
         return ({
             Name: userinfo.fisrtName,
             lastName: userinfo.lastName,
