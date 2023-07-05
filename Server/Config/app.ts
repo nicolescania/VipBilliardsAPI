@@ -27,6 +27,8 @@ import User from '../Models/user';
 // import router data from the router module(s)
 import indexRouter from '../Routes/index'; 
 
+import gameTypeRouter from '../Routes/games'
+
 
 
 
@@ -42,6 +44,11 @@ app.use('/index', rolesrouter)
 
 const usersrouter = require('../Routes/index');
 app.use('/index', usersrouter)
+
+const gamesrouter = require('../Routes/games')
+app.use('/gametypes', gamesrouter)
+
+
 
 
 // Complete the DB Connection Configuration
@@ -107,6 +114,9 @@ app.use(passport.session());
 
 // add routing 
 app.use('/', indexRouter);
+app.use('/', gameTypeRouter);
+
+
 
 
 

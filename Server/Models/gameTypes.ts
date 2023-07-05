@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { PassportLocalModel } from 'mongoose';
 
 
 
@@ -10,7 +11,7 @@ interface IgameTypes extends Document {
 
 }
 
-const UserSchema: Schema<IgameTypes> = new Schema
+const gameTypeSchema: Schema<IgameTypes> = new Schema
     ({
 
         name: { type: String, require: true },
@@ -23,7 +24,7 @@ const UserSchema: Schema<IgameTypes> = new Schema
 
 
     //  Create a Model using the Schema
-const Model = mongoose.model<IgameTypes>("gameTypes", UserSchema);
+const Model = mongoose.model<IgameTypes>("gameTypes", gameTypeSchema);
 
 //  Export the Model -> converts this file into a module
 export default Model;
