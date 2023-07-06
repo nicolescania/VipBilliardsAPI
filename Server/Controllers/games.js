@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
-async function list(req, res) {
+async function gameTypeList(req, res) {
     try {
         const gameType = await gameTypes_1.default.find();
         res.json(gameType);
@@ -23,7 +23,7 @@ async function gameList(req, res) {
         res.status(500).json({ message: err });
     }
 }
-async function create(req, res) {
+async function createGameType(req, res) {
     const gameType = new gameTypes_1.default({
         name: req.body.name,
         pricePerHour: req.body.pricePerHour,
@@ -64,12 +64,38 @@ async function getGameType(req, res, next) {
     res.gameType = gameType;
     next();
 }
+async function getGame(req, res, next) {
+    let game;
+    try {
+        game = await game_1.default.findById(req.params.id);
+        if (game == null) {
+            return res.status(404).json({ message: 'Can not find game' });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    res.game = game;
+    next();
+}
 async function updateGameType(req, res) {
     if (req.body.name != null) {
         res.gameType.name = req.body.name;
         try {
             const updateGameType = await res.gameType.save();
             res.json(updateGameType);
+        }
+        catch (error) {
+            res.status(400).json({ message: error });
+        }
+    }
+}
+async function updateGame(req, res) {
+    if (req.body.name != null) {
+        res.game.name = req.body.name;
+        try {
+            const updateGame = await res.game.save();
+            res.json(updateGame);
         }
         catch (error) {
             res.status(400).json({ message: error });
@@ -86,5 +112,15 @@ async function deleteGameType(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { list, create, getGameType, updateGameType, deleteGameType, gameList, createGame };
+async function deleteGame(req, res) {
+    let id = req.params.id;
+    try {
+        await res.game.deleteOne({ id });
+        res.json({ message: 'game deleted' });
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame };
 //# sourceMappingURL=games.js.map

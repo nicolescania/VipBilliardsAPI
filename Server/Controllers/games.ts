@@ -4,9 +4,8 @@ import mongoose from "mongoose";
 import games from '../Models/game'
 
 
-// GET GAME TYPE LIST
-
-async function list(req: any, res: any) {
+// GET GAME TYPES LIST
+async function gameTypeList(req: any, res: any) {
 
     try {
         const gameType = await gameTypes.find()
@@ -17,7 +16,7 @@ async function list(req: any, res: any) {
 
 }
 
-// GET GAME  LIST
+// GET GAME LIST
 async function gameList(req: any, res: any) {
 
     try {
@@ -29,9 +28,8 @@ async function gameList(req: any, res: any) {
 
 }
 
-
-
-async function create(req: any, res: any) {
+// CREATE GAMETYPE
+async function createGameType(req: any, res: any) {
 
 
     const gameType = new gameTypes({
@@ -39,7 +37,7 @@ async function create(req: any, res: any) {
         name: req.body.name,
         pricePerHour: req.body.pricePerHour,
         pricePerMinute: req.body.pricePerMinute,
-     
+
 
     })
 
@@ -56,13 +54,14 @@ async function create(req: any, res: any) {
 
 
 
+// CREATE GAME
 async function createGame(req: any, res: any) {
 
 
     const game = new games({
 
         name: req.body.name,
-        gameType: req.body.gameType   
+        gameType: req.body.gameType
 
     })
 
@@ -79,10 +78,7 @@ async function createGame(req: any, res: any) {
 
 
 
-
-
-
-
+// GET GAME TYPE
 async function getGameType(req: any, res: any, next: any) {
     let gameType
     try {
@@ -106,9 +102,31 @@ async function getGameType(req: any, res: any, next: any) {
 
 }
 
+// GET GAME 
+async function getGame(req: any, res: any, next: any) {
+    let game
+    try {
+        game = await games.findById(req.params.id)
 
 
+        if (game == null) {
+            return res.status(404).json({ message: 'Can not find game' }
+            )
+        }
 
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+
+    res.game = game
+    next()
+
+}
+
+// UPDATE GAME TYPE
 async function updateGameType(req: any, res: any) {
     if (req.body.name != null) {
 
@@ -128,6 +146,28 @@ async function updateGameType(req: any, res: any) {
 
 }
 
+// UPDATE GAME 
+async function updateGame(req: any, res: any) {
+    if (req.body.name != null) {
+
+        res.game.name = req.body.name
+
+        try {
+
+            const updateGame = await res.game.save()
+            res.json(updateGame)
+
+        } catch (error) {
+            res.status(400).json({ message: error })
+
+        }
+
+    }
+
+}
+
+
+// DELETE GAME TYPE
 async function deleteGameType(req: any, res: any) {
     let id = req.params.id;
 
@@ -142,7 +182,21 @@ async function deleteGameType(req: any, res: any) {
     }
 }
 
+// DELETE GAME
+
+async function deleteGame(req: any, res: any) {
+    let id = req.params.id;
+
+    try {
+
+        await res.game.deleteOne({ id })
+        res.json({ message: 'game deleted' })
+    } catch (err) {
+
+        res.status(500).json({ message: err })
+
+    }
+}
 
 
-
-module.exports = { list, create, getGameType, updateGameType, deleteGameType,gameList, createGame };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame };
