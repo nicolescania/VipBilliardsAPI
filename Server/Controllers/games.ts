@@ -17,6 +17,19 @@ async function list(req: any, res: any) {
 
 }
 
+// GET GAME  LIST
+async function gameList(req: any, res: any) {
+
+    try {
+        const game = await games.find()
+        res.json(game)
+    } catch (err) {
+        res.status(500).json({ message: err })
+    }
+
+}
+
+
 
 async function create(req: any, res: any) {
 
@@ -132,4 +145,4 @@ async function deleteGameType(req: any, res: any) {
 
 
 
-module.exports = { list, create, getGameType, updateGameType, deleteGameType, createGame };
+module.exports = { list, create, getGameType, updateGameType, deleteGameType,gameList, createGame };

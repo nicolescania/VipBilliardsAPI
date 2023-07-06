@@ -9,13 +9,15 @@ const gameController = require('../Controllers/games')
 
 
 //GET GAME TYPES LIST
-
 router.get('/gameTypes/list', gameController.list)
-// CREATE GAME TYPE
+
+//GET GAMES LIST
+router.get('/gameTypes/gamelist', gameController.gameList)
+
+// CREATE GAME TYPES
 router.post('/gameTypes/create', gameController.create)
 
 // CREATE GAME
-
 router.post('/game/create', gameController.createGame)
 
 
@@ -24,9 +26,15 @@ router.post('/game/create', gameController.createGame)
 
 
 
-//MILDWARE
-
+//MILDWARE GAME TYPES
 router.get('/gametypes/:id', gameController.getGameType, (req: any, res: any) => {
+    res.json(res.gameType)
+
+})
+
+
+//MILDWARE GAME TYPES
+router.get('/game/:id', gameController.getGameType, (req: any, res: any) => {
     res.json(res.gameType)
 
 })

@@ -14,6 +14,15 @@ async function list(req, res) {
         res.status(500).json({ message: err });
     }
 }
+async function gameList(req, res) {
+    try {
+        const game = await game_1.default.find();
+        res.json(game);
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
 async function create(req, res) {
     const gameType = new gameTypes_1.default({
         name: req.body.name,
@@ -77,5 +86,5 @@ async function deleteGameType(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { list, create, getGameType, updateGameType, deleteGameType, createGame };
+module.exports = { list, create, getGameType, updateGameType, deleteGameType, gameList, createGame };
 //# sourceMappingURL=games.js.map
