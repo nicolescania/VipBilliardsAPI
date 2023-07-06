@@ -6,7 +6,7 @@ interface IchargeDetails extends Document {
     name: String;
     game: mongoose.Types.ObjectId;
     amount: Number;
-    duration:Number;
+    duration: Number;
     startDate: Date;
     endDate: Date
 
@@ -28,7 +28,7 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
 
     })
 
-    //  Create a Model using the Schema
+//  Create a Model using the Schema
 const Model = mongoose.model<IchargeDetails>("chargeDetails", chargeDetailsSchema);
 
 //  Export the Model -> converts this file into a module

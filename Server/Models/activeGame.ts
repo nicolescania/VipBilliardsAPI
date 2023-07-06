@@ -1,0 +1,29 @@
+import mongoose, { Schema, Document } from 'mongoose';
+import { PassportLocalModel } from 'mongoose';
+
+
+interface IactiveGame extends Document {
+    chargeDetails: mongoose.Types.ObjectId;
+    game: mongoose.Types.ObjectId;
+
+
+}
+
+
+const activeGameSchema: Schema<IactiveGame> = new Schema
+
+
+    ({
+
+
+        chargeDetails: { type: Schema.Types.ObjectId, ref: 'chargeDetails', required: true },
+        game: { type: Schema.Types.ObjectId, ref: 'games', required: true }
+
+    })
+
+
+
+const Model = mongoose.model<IactiveGame>("activeGame", activeGameSchema);
+
+//  Export the Model -> converts this file into a module
+export default Model;
