@@ -45,7 +45,7 @@ app.use('/index', rolesrouter);
 const usersrouter = require('../Routes/index');
 app.use('/index', usersrouter);
 const gamesrouter = require('../Routes/games');
-app.use('/gametypes', gamesrouter);
+app.use('/games', gamesrouter);
 const DBConfig = __importStar(require("./db"));
 mongoose_1.default.connect(DBConfig.RemoteURI);
 const db = mongoose_1.default.connection;

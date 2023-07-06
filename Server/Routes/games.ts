@@ -17,6 +17,29 @@ router.post('/gameTypes/create', gameController.create)
 
 
 
+
+//MILDWARE
+
+router.get('/gametypes/:id',gameController.getGameType, (req: any, res: any) => {
+    res.json(res.gameType)
+
+})
+
+
+//UPDATE GAME
+
+router.patch('/gametypes/:id', gameController.getGameType, gameController.updateGameType )
+
+//DEETE DELETE
+
+router.delete('/gametypes/:id', gameController.getGameType, gameController.deleteGameType )
+
+
+
+
+
+
+
 module.exports = router
 
 export default router;

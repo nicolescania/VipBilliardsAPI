@@ -46,7 +46,7 @@ const usersrouter = require('../Routes/index');
 app.use('/index', usersrouter)
 
 const gamesrouter = require('../Routes/games')
-app.use('/gametypes', gamesrouter)
+app.use('/games', gamesrouter)
 
 
 

@@ -27,5 +27,41 @@ async function create(req, res) {
         res.status(400).json({ message: err });
     }
 }
-module.exports = { list, create };
+async function getGameType(req, res, next) {
+    let gameType;
+    try {
+        gameType = await gameTypes_1.default.findById(req.params.id);
+        if (gameType == null) {
+            return res.status(404).json({ message: 'Can not find game' });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    res.gameType = gameType;
+    next();
+}
+async function updateGameType(req, res) {
+    if (req.body.name != null) {
+        res.gameType.name = req.body.name;
+        try {
+            const updateGameType = await res.gameType.save();
+            res.json(updateGameType);
+        }
+        catch (error) {
+            res.status(400).json({ message: error });
+        }
+    }
+}
+async function deleteGameType(req, res) {
+    let id = req.params.id;
+    try {
+        await res.gameType.deleteOne({ id });
+        res.json({ message: 'game deleted' });
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+module.exports = { list, create, getGameType, updateGameType, deleteGameType };
 //# sourceMappingURL=games.js.map
