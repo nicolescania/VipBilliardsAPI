@@ -24,10 +24,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const gameSchema = new mongoose_1.Schema({
+const chargeDetailsSchema = new mongoose_1.Schema({
     name: { type: String, require: true },
-    gameType: { type: mongoose_1.Schema.Types.ObjectId, ref: 'gameTypes', required: true }
+    game: { type: mongoose_1.Schema.Types.ObjectId, ref: 'games', required: true },
+    amount: { type: Number, require: true },
+    duration: { type: Number, require: true },
+    startDate: { type: Date, require: true },
+    endDate: { type: Date, require: true },
 });
-const Model = mongoose_1.default.model("games", gameSchema);
+const Model = mongoose_1.default.model("chargeDetails", chargeDetailsSchema);
 exports.default = Model;
-//# sourceMappingURL=game.js.map
+//# sourceMappingURL=chargesDetails.js.map
