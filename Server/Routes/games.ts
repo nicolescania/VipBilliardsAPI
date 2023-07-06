@@ -24,7 +24,7 @@ router.post('/game/create', gameController.createGame)
 
 
 //MILDWARE GAME TYPES
-router.get('/gametypes/:id', gameController.getGameType, (req: any, res: any) => {
+router.get('/gameTypes/:id', gameController.getGameType, (req: any, res: any) => {
     res.json(res.gameType)
 
 })
@@ -38,14 +38,14 @@ router.get('/game/:id', gameController.getGame, (req: any, res: any) => {
 
 
 //UPDATE GAME TYPE
-router.patch('/gametypes/:id', gameController.getGameType, gameController.updateGameType)
+router.patch('/gameTypes/:id', gameController.getGameType, gameController.updateGameType)
 
 //UPDATE GAME 
 router.patch('/game/:id', gameController.getGame, gameController.updateGame)
 
 
 //DELETE GAME TYPE
-router.delete('/gametypes/:id', gameController.getGameType, gameController.deleteGameType)
+router.delete('/gameTypes/:id', gameController.getGameType, gameController.deleteGameType)
 
 
 //DELETE GAME 

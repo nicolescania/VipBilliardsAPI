@@ -10,15 +10,15 @@ router.get('/gameTypes/list', gameController.gameTypeList);
 router.get('/gameTypes/gamelist', gameController.gameList);
 router.post('/gameTypes/create', gameController.createGameType);
 router.post('/game/create', gameController.createGame);
-router.get('/gametypes/:id', gameController.getGameType, (req, res) => {
+router.get('/gameTypes/:id', gameController.getGameType, (req, res) => {
     res.json(res.gameType);
 });
 router.get('/game/:id', gameController.getGame, (req, res) => {
     res.json(res.game);
 });
-router.patch('/gametypes/:id', gameController.getGameType, gameController.updateGameType);
+router.patch('/gameTypes/:id', gameController.getGameType, gameController.updateGameType);
 router.patch('/game/:id', gameController.getGame, gameController.updateGame);
-router.delete('/gametypes/:id', gameController.getGameType, gameController.deleteGameType);
+router.delete('/gameTypes/:id', gameController.getGameType, gameController.deleteGameType);
 router.delete('/game/:id', gameController.getGame, gameController.deleteGame);
 module.exports = router;
 exports.default = router;
