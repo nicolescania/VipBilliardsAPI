@@ -1,6 +1,7 @@
 import express from "express";
 import gameTypes from '../Models/gameTypes'
 import mongoose from "mongoose";
+import games from '../Models/game'
 
 
 // GET GAME TYPE LIST
@@ -24,7 +25,8 @@ async function create(req: any, res: any) {
 
         name: req.body.name,
         pricePerHour: req.body.pricePerHour,
-        pricePerMinute: req.body.pricePerMinute
+        pricePerMinute: req.body.pricePerMinute,
+     
 
     })
 
@@ -37,6 +39,34 @@ async function create(req: any, res: any) {
 
 
 }
+
+
+
+
+async function createGame(req: any, res: any) {
+
+
+    const game = new games({
+
+        name: req.body.name,
+        gameType: req.body.gameType   
+
+    })
+
+    try {
+        const newgame = await game.save()
+        res.status(201).json(newgame)
+    } catch (err) {
+        res.status(400).json({ message: err })
+    }
+
+
+}
+
+
+
+
+
 
 
 
@@ -102,4 +132,4 @@ async function deleteGameType(req: any, res: any) {
 
 
 
-module.exports = { list, create, getGameType, updateGameType, deleteGameType };
+module.exports = { list, create, getGameType, updateGameType, deleteGameType, createGame };

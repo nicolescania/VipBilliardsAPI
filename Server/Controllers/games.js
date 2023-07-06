@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
+const game_1 = __importDefault(require("../Models/game"));
 async function list(req, res) {
     try {
         const gameType = await gameTypes_1.default.find();
@@ -17,11 +18,24 @@ async function create(req, res) {
     const gameType = new gameTypes_1.default({
         name: req.body.name,
         pricePerHour: req.body.pricePerHour,
-        pricePerMinute: req.body.pricePerMinute
+        pricePerMinute: req.body.pricePerMinute,
     });
     try {
         const newGameType = await gameType.save();
         res.status(201).json(newGameType);
+    }
+    catch (err) {
+        res.status(400).json({ message: err });
+    }
+}
+async function createGame(req, res) {
+    const game = new game_1.default({
+        name: req.body.name,
+        gameType: req.body.gameType
+    });
+    try {
+        const newgame = await game.save();
+        res.status(201).json(newgame);
     }
     catch (err) {
         res.status(400).json({ message: err });
@@ -63,5 +77,5 @@ async function deleteGameType(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { list, create, getGameType, updateGameType, deleteGameType };
+module.exports = { list, create, getGameType, updateGameType, deleteGameType, createGame };
 //# sourceMappingURL=games.js.map

@@ -11,7 +11,13 @@ const gameController = require('../Controllers/games')
 //GET GAME TYPES LIST
 
 router.get('/gameTypes/list', gameController.list)
+// CREATE GAME TYPE
 router.post('/gameTypes/create', gameController.create)
+
+// CREATE GAME
+
+router.post('/game/create', gameController.createGame)
+
 
 
 
@@ -20,7 +26,7 @@ router.post('/gameTypes/create', gameController.create)
 
 //MILDWARE
 
-router.get('/gametypes/:id',gameController.getGameType, (req: any, res: any) => {
+router.get('/gametypes/:id', gameController.getGameType, (req: any, res: any) => {
     res.json(res.gameType)
 
 })
@@ -28,11 +34,11 @@ router.get('/gametypes/:id',gameController.getGameType, (req: any, res: any) => 
 
 //UPDATE GAME
 
-router.patch('/gametypes/:id', gameController.getGameType, gameController.updateGameType )
+router.patch('/gametypes/:id', gameController.getGameType, gameController.updateGameType)
 
 //DEETE DELETE
 
-router.delete('/gametypes/:id', gameController.getGameType, gameController.deleteGameType )
+router.delete('/gametypes/:id', gameController.getGameType, gameController.deleteGameType)
 
 
 

@@ -8,6 +8,7 @@ const router = express_1.default.Router();
 const gameController = require('../Controllers/games');
 router.get('/gameTypes/list', gameController.list);
 router.post('/gameTypes/create', gameController.create);
+router.post('/game/create', gameController.createGame);
 router.get('/gametypes/:id', gameController.getGameType, (req, res) => {
     res.json(res.gameType);
 });
