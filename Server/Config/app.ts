@@ -29,6 +29,10 @@ import indexRouter from '../Routes/index';
 
 import gameTypeRouter from '../Routes/games'
 
+import gameManagmentRouter from '../Routes/gameManagment'
+
+//import gameManagmentRouter from '../Routes/gameManagment'
+
 
 
 
@@ -47,6 +51,8 @@ app.use('/index', usersrouter)
 
 const gamesrouter = require('../Routes/games')
 app.use('/games', gamesrouter)
+
+
 
 
 
@@ -115,6 +121,7 @@ app.use(passport.session());
 // add routing 
 app.use('/', indexRouter);
 app.use('/', gameTypeRouter);
+app.use('/', gameManagmentRouter);
 
 
 

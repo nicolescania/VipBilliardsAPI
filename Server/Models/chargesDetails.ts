@@ -8,7 +8,8 @@ interface IchargeDetails extends Document {
     amount: Number;
     duration: Number;
     startDate: Date;
-    endDate: Date
+    endDate: Date;
+
 
 
 }
@@ -18,12 +19,21 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
 
     ({
 
-        name: { type: String, require: true },
+       
         game: { type: Schema.Types.ObjectId, ref: 'games', required: true },
         amount: { type: Number, require: true },
-        duration: { type: Number, require: true },
-        startDate: { type: Date, require: true },
-        endDate: { type: Date, require: true },
+        duration: { type: Number, require: true, },
+        startDate:{  type: Date, },
+        endDate: { type: Date, require: true, }
+
+
+        /* amount
+- duration
+- startDate
+- endDate
+- holdDuration =
+- holdDateStarted =post
+- isHolded =*/
 
 
     })

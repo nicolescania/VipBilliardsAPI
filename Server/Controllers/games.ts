@@ -61,7 +61,7 @@ async function createGame(req: any, res: any) {
     const game = new games({
 
         name: req.body.name,
-        gameType: req.body.gameType
+        gameType: await findGameType(req.body.gameType) 
 
     })
 
@@ -70,6 +70,45 @@ async function createGame(req: any, res: any) {
         res.status(201).json(newgame)
     } catch (err) {
         res.status(400).json({ message: err })
+    }
+
+
+}
+
+
+// GET GAME TYPE
+async function findGameType(id: any) {
+
+    return await gameTypes.findById(id)
+
+}
+
+
+
+// GET GAME 
+async function findGame(id: any) {
+
+    return await games.findById(id)
+
+
+}
+async function gameInfo(req: any) {
+    let gameType
+
+    try {
+
+
+        return ({
+            name: req.body.name,
+            
+            gameType: await findGameType(req.body.gameType) 
+
+
+
+        })
+
+    } catch (error) {
+
     }
 
 
@@ -199,4 +238,4 @@ async function deleteGame(req: any, res: any) {
 }
 
 
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType,findGame };

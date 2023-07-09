@@ -38,6 +38,7 @@ const connect_flash_1 = __importDefault(require("connect-flash"));
 const cors_1 = __importDefault(require("cors"));
 const index_1 = __importDefault(require("../Routes/index"));
 const games_1 = __importDefault(require("../Routes/games"));
+const gameManagment_1 = __importDefault(require("../Routes/gameManagment"));
 const app = (0, express_1.default)();
 const rolesrouter = require('../Routes/index');
 app.use('/index', rolesrouter);
@@ -74,6 +75,7 @@ app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use('/', index_1.default);
 app.use('/', games_1.default);
+app.use('/', gameManagment_1.default);
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
 });
