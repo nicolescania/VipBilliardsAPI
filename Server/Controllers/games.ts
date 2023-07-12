@@ -92,16 +92,16 @@ async function findGame(id: any) {
 
 
 }
-async function gameInfo(req: any) {
+
+// GET GAME INFO
+async function gameInfo(req: any, gameinfo: any) {
     let gameType
 
     try {
 
-
         return ({
-            name: req.body.name,
-            
-            gameType: await findGameType(req.body.gameType) 
+            name: gameinfo.name,
+            gameType: await findGameType(gameinfo.gameType) 
 
 
 
@@ -113,6 +113,8 @@ async function gameInfo(req: any) {
 
 
 }
+
+
 
 
 
@@ -159,8 +161,7 @@ async function getGame(req: any, res: any, next: any) {
 
     }
 
-
-    res.game = game
+     res.game = await gameInfo(req, game)
     next()
 
 }
@@ -238,4 +239,4 @@ async function deleteGame(req: any, res: any) {
 }
 
 
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType,findGame };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType,findGame, gameInfo };

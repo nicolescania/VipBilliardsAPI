@@ -56,12 +56,12 @@ async function findGameType(id) {
 async function findGame(id) {
     return await game_1.default.findById(id);
 }
-async function gameInfo(req) {
+async function gameInfo(req, gameinfo) {
     let gameType;
     try {
         return ({
-            name: req.body.name,
-            gameType: await findGameType(req.body.gameType)
+            name: gameinfo.name,
+            gameType: await findGameType(gameinfo.gameType)
         });
     }
     catch (error) {
@@ -92,7 +92,7 @@ async function getGame(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    res.game = game;
+    res.game = await gameInfo(req, game);
     next();
 }
 async function updateGameType(req, res) {
@@ -139,5 +139,5 @@ async function deleteGame(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType, findGame };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType, findGame, gameInfo };
 //# sourceMappingURL=games.js.map

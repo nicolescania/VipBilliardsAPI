@@ -44,9 +44,23 @@ const endDate = (req: any, res: any) => {
 
 // WORK IN GET, GAME PRICE
 
-const getGamePrice = () => {
-    let finalAmount = elapsepTime * 20
-    return finalAmount
+async function getGamePrice ()  {
+
+    // calcular precio y tiempo por defecto y calcule
+
+let game = await gameController.findGame()
+
+
+
+
+
+
+
+
+   // let finalAmount = elapsepTime * 20
+   // return finalAmount
+
+
 };
 
 
@@ -89,28 +103,66 @@ return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + sec
      
 };
 
+async function startGame(req: any, res: any){
 
 
 
-async function startGame(req: any, res: any) {
+    let gameInfo = await gameController.findGame(req.body.gameId)
 
+   
+
+     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    let totalAmount= amount(gameTypesDetails.pricePerHour,gameTypesDetails.pricePerMinute, 65 )
+
+  
+
+
+     return res.json({gameInfo,
+         gameTypesDetails,
+         totalAmount
+         });
+}
+
+
+ function amount(amountPerHour: any, amountPerMinute:any, totalDuration:any){
+
+
+    if (totalDuration <= 60) {
+        return amountPerHour
+     
+    } 
+        return totalDuration * amountPerMinute
+
+}
+
+
+
+async function startGame1(req: any, res: any) {
 
     const startgame = new chargeDetails({
 
         // Mesa
         game: await gameController.findGame(req.body.game),
+       // amount:  await  gameController.gameInfo(req, gameInfo),
+
        
         // default price
-        amount: getGamePrice(),
+      //  amount: getGamePrice(),
 
         // Time that game started
         startDate: Date.now(),
 
 
-
     })
 
+    
+    //game = gameinfo
+
+    //gameinfo = await  gameController.gameInfo(req, game)
+
     try {
+        
 
         const newstartgame = await startgame.save()        
         res.status(201).json(newstartgame)
@@ -173,4 +225,3 @@ async function getGameCharge(req: any, res: any, next: any) {
 
 
 module.exports = { startDate, updateDate, endDate, startGame, gameListOfCharges, getGameCharge };
-

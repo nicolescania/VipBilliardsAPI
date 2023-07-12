@@ -20,10 +20,10 @@ const updateDate = (startTime, elapsedTime) => {
 const endDate = (req, res) => {
     res.json({ elapsed: elapsepTime });
 };
-const getGamePrice = () => {
-    let finalAmount = elapsepTime * 20;
-    return finalAmount;
-};
+async function getGamePrice() {
+    let game = await gameController.findGame();
+}
+;
 const duration = () => {
     let duration = elapsepTime;
     return duration;
@@ -39,9 +39,23 @@ const getFormattedDate = (date) => {
     return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
 };
 async function startGame(req, res) {
+    let gameInfo = await gameController.findGame(req.body.gameId);
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
+    let totalAmount = amount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65);
+    return res.json({ gameInfo,
+        gameTypesDetails,
+        totalAmount
+    });
+}
+function amount(amountPerHour, amountPerMinute, totalDuration) {
+    if (totalDuration <= 60) {
+        return amountPerHour;
+    }
+    return totalDuration * amountPerMinute;
+}
+async function startGame1(req, res) {
     const startgame = new chargesDetails_1.default({
         game: await gameController.findGame(req.body.game),
-        amount: getGamePrice(),
         startDate: Date.now(),
     });
     try {
