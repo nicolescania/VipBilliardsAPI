@@ -13,9 +13,11 @@ const gameManagmentController = require('../Controllers/gameManagment')
 
 
 
-  router.get('/time/start', gameManagmentController.startDate)
-  router.get('/time/stop', gameManagmentController.endDate)
+
   router.post('/time/finalcharge', gameManagmentController.startGame)
+  //router.post('/time/finalduration', gameManagmentController.finalDuration)
+
+
 
 
 // GET LIST OF CHARGES

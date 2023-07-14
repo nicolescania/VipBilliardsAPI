@@ -10,168 +10,126 @@ const gameController = require('../Controllers/games')
 
 
 
-// START TIMER
+
+// GET DATE FORMATTED
 
 
-let startTime;
-let elapsepTime = 8
-let timerInterval;
+const getFormattedDate = (date: any) => {
 
 
-const startDate = (req: any, res: any) => {
+    date = new Date(date);
 
-    startTime = Date.now() - elapsepTime;
-    timerInterval = setInterval(updateDate, 10)
-    return timerInterval
+    // adjust 0 before single digit date
+    let day = ("0" + date.getDate()).slice(-2);
 
-};
+    // current month
+    let month = ("0" + (date.getMonth() + 1)).slice(-2);
 
+    // current year
+    let year = date.getFullYear();
 
-const updateDate = (startTime: any, elapsedTime: any) => {
+    // current hours
+    let hours = date.getHours();
 
-    const currentTime = Date.now();
-    elapsedTime = currentTime - startTime;
+    // current minutes
+    let minutes = date.getMinutes();
 
-};
+    // current seconds
+    let seconds = date.getSeconds();
 
-
-const endDate = (req: any, res: any) => {
-
-    res.json({ elapsed: elapsepTime });
-
-};
-
-
-// WORK IN GET, GAME PRICE
-
-async function getGamePrice ()  {
-
-    // calcular precio y tiempo por defecto y calcule
-
-let game = await gameController.findGame()
+    // prints date & time in YYYY-MM-DD HH:MM:SS format
+    return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
 
 
-
-
-
-
-
-
-   // let finalAmount = elapsepTime * 20
-   // return finalAmount
 
 
 };
 
-
-
-
-const duration = () => {
-    let duration = elapsepTime
-    return duration
-};
-
-
-const getFormattedDate = (date:any) => {
-
-
-  date = new Date(date);
-
-// adjust 0 before single digit date
-let day = ("0" + date.getDate()).slice(-2);
-
-// current month
-let month = ("0" + (date.getMonth() + 1)).slice(-2);
-
-// current year
-let year = date.getFullYear();
-
-// current hours
-let hours = date.getHours();
-
-// current minutes
-let minutes = date.getMinutes();
-
-// current seconds
-let seconds = date.getSeconds();
-
-// prints date & time in YYYY-MM-DD HH:MM:SS format
-return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
-
-
-
-     
-};
-
-async function startGame(req: any, res: any){
+async function startGame(req: any, res: any) {
 
 
 
     let gameInfo = await gameController.findGame(req.body.gameId)
 
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    let totalAmount = amount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65)
    
-
-     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
-
-    let totalAmount= amount(gameTypesDetails.pricePerHour,gameTypesDetails.pricePerMinute, 65 )
-
-  
-
-
-     return res.json({gameInfo,
-         gameTypesDetails,
-         totalAmount
-         });
-}
-
-
- function amount(amountPerHour: any, amountPerMinute:any, totalDuration:any){
-
-
-    if (totalDuration <= 60) {
-        return amountPerHour
-     
-    } 
-        return totalDuration * amountPerMinute
-
-}
-
-
-
-async function startGame1(req: any, res: any) {
 
     const startgame = new chargeDetails({
 
-        // Mesa
-        game: await gameController.findGame(req.body.game),
-       // amount:  await  gameController.gameInfo(req, gameInfo),
+        // Game Info
+        game: gameInfo,
 
-       
-        // default price
-      //  amount: getGamePrice(),
+        // total Amount
+        amount: totalAmount,
 
         // Time that game started
         startDate: Date.now(),
 
-
     })
 
-    
-    //game = gameinfo
-
-    //gameinfo = await  gameController.gameInfo(req, game)
-
     try {
-        
 
-        const newstartgame = await startgame.save()        
-        res.status(201).json(newstartgame)
+        const newstartgame = await startgame.save()
+       
+        let game_active = await gameActive( newstartgame._id, gameInfo._id)
+           return res.json({
+            Game: gameInfo.name,
+            Game_Type: gameTypesDetails.name,
+            Date: newstartgame.startDate,
+            total_Amount: totalAmount, 
+
+        });
+
+     
     } catch (err) {
         res.status(400).json({ message: err })
     }
 
 
+
+
 }
+
+
+
+
+
+function amount(amountPerHour: any, amountPerMinute: any, totalDuration: any) {
+
+
+    if (totalDuration <= 60) {
+        return amountPerHour
+
+    }
+    return totalDuration * amountPerMinute
+
+}
+
+async function gameActive( chargesDetailsId: any, gameId: any) {
+
+
+    const gameActive = new activeGame({
+
+        gameChargeDetails: chargesDetailsId,
+        game: gameId
+
+    })
+
+    try {
+
+        const newGameActive = await gameActive.save()
+        return newGameActive
+
+
+    } catch (err) {
+        return ({ message: err })
+    }
+}
+
+
+
 
 
 // GET LIST OF CHARGES
@@ -179,8 +137,6 @@ async function gameListOfCharges(req: any, res: any) {
 
     try {
         const finalcharge = await chargeDetails.find()
-
-
         res.json(finalcharge)
     } catch (err) {
         res.status(500).json({ message: err })
@@ -224,4 +180,4 @@ async function getGameCharge(req: any, res: any, next: any) {
 
 
 
-module.exports = { startDate, updateDate, endDate, startGame, gameListOfCharges, getGameCharge };
+module.exports = { startGame, gameListOfCharges, getGameCharge, };

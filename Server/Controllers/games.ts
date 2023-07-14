@@ -93,6 +93,10 @@ async function findGame(id: any) {
 
 }
 
+
+
+
+
 // GET GAME INFO
 async function gameInfo(req: any, gameinfo: any) {
     let gameType
@@ -102,7 +106,6 @@ async function gameInfo(req: any, gameinfo: any) {
         return ({
             name: gameinfo.name,
             gameType: await findGameType(gameinfo.gameType) 
-
 
 
         })

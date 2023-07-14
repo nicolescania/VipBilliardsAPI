@@ -4,30 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const chargesDetails_1 = __importDefault(require("../Models/chargesDetails"));
+const activeGame_1 = __importDefault(require("../Models/activeGame"));
 const gameController = require('../Controllers/games');
-let startTime;
-let elapsepTime = 8;
-let timerInterval;
-const startDate = (req, res) => {
-    startTime = Date.now() - elapsepTime;
-    timerInterval = setInterval(updateDate, 10);
-    return timerInterval;
-};
-const updateDate = (startTime, elapsedTime) => {
-    const currentTime = Date.now();
-    elapsedTime = currentTime - startTime;
-};
-const endDate = (req, res) => {
-    res.json({ elapsed: elapsepTime });
-};
-async function getGamePrice() {
-    let game = await gameController.findGame();
-}
-;
-const duration = () => {
-    let duration = elapsepTime;
-    return duration;
-};
 const getFormattedDate = (date) => {
     date = new Date(date);
     let day = ("0" + date.getDate()).slice(-2);
@@ -42,10 +20,24 @@ async function startGame(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
     let totalAmount = amount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65);
-    return res.json({ gameInfo,
-        gameTypesDetails,
-        totalAmount
+    const startgame = new chargesDetails_1.default({
+        game: gameInfo,
+        amount: totalAmount,
+        startDate: Date.now(),
     });
+    try {
+        const newstartgame = await startgame.save();
+        let game_active = await gameActive(newstartgame._id, gameInfo._id);
+        return res.json({
+            Game: gameInfo.name,
+            Game_Type: gameTypesDetails.name,
+            Date: newstartgame.startDate,
+            total_Amount: totalAmount,
+        });
+    }
+    catch (err) {
+        res.status(400).json({ message: err });
+    }
 }
 function amount(amountPerHour, amountPerMinute, totalDuration) {
     if (totalDuration <= 60) {
@@ -53,17 +45,17 @@ function amount(amountPerHour, amountPerMinute, totalDuration) {
     }
     return totalDuration * amountPerMinute;
 }
-async function startGame1(req, res) {
-    const startgame = new chargesDetails_1.default({
-        game: await gameController.findGame(req.body.game),
-        startDate: Date.now(),
+async function gameActive(chargesDetailsId, gameId) {
+    const gameActive = new activeGame_1.default({
+        gameChargeDetails: chargesDetailsId,
+        game: gameId
     });
     try {
-        const newstartgame = await startgame.save();
-        res.status(201).json(newstartgame);
+        const newGameActive = await gameActive.save();
+        return newGameActive;
     }
     catch (err) {
-        res.status(400).json({ message: err });
+        return ({ message: err });
     }
 }
 async function gameListOfCharges(req, res) {
@@ -89,5 +81,5 @@ async function getGameCharge(req, res, next) {
     res.gameCharge = gameCharge;
     next();
 }
-module.exports = { startDate, updateDate, endDate, startGame, gameListOfCharges, getGameCharge };
+module.exports = { startGame, gameListOfCharges, getGameCharge, };
 //# sourceMappingURL=gameManagment.js.map
