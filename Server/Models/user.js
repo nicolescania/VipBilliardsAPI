@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserSchema = new mongoose_1.Schema({
-    fisrtName: { type: String, require: true },
+    firstName: { type: String, require: true },
     lastName: { type: String, require: true },
     emailAddress: { type: String, require: true },
     password: { type: String, require: true },

@@ -61,7 +61,7 @@ async function createGame(req: any, res: any) {
     const game = new games({
 
         name: req.body.name,
-        gameType: await findGameType(req.body.gameType) 
+        gameType:  await findGameType(req.body.gameType) 
 
     })
 
@@ -74,7 +74,6 @@ async function createGame(req: any, res: any) {
 
 
 }
-
 
 // GET GAME TYPE
 async function findGameType(id: any) {
@@ -116,10 +115,6 @@ async function gameInfo(req: any, gameinfo: any) {
 
 
 }
-
-
-
-
 
 
 // GET GAME TYPE
@@ -164,7 +159,8 @@ async function getGame(req: any, res: any, next: any) {
 
     }
 
-     res.game = await gameInfo(req, game)
+
+    res.game = game
     next()
 
 }
@@ -242,4 +238,4 @@ async function deleteGame(req: any, res: any) {
 }
 
 
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType,findGame, gameInfo };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame,findGameType };

@@ -92,7 +92,7 @@ async function getGame(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    res.game = await gameInfo(req, game);
+    res.game = game;
     next();
 }
 async function updateGameType(req, res) {
@@ -139,5 +139,5 @@ async function deleteGame(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, findGameType, findGame, gameInfo };
+module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType };
 //# sourceMappingURL=games.js.map

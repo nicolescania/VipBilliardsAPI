@@ -10,7 +10,7 @@ import passportLocalMongoose from 'passport-local-mongoose';
 
 
 interface IUser extends Document {
-  fisrtName: String;
+  firstName: String;
   lastName: String;
   emailAddress: String;
   password: string;
@@ -25,7 +25,7 @@ interface IUser extends Document {
 const UserSchema: Schema<IUser> = new Schema
   ({
 
-    fisrtName: { type: String, require: true },
+    firstName: { type: String, require: true },
     lastName: { type: String, require: true },
     emailAddress: { type: String, require: true },
     password: { type: String, require: true },

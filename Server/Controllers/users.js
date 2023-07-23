@@ -34,7 +34,7 @@ async function create(req, res) {
 async function save(userInfo) {
     try {
         const User = new user_1.default({
-            fisrtName: userInfo.fisrtName,
+            firstName: userInfo.firstName,
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
             password: userInfo.password,
@@ -74,7 +74,7 @@ async function login(req, res) {
                     });
                 }
                 if (result) {
-                    let token = jsonwebtoken_1.default.sign({ name: user.fisrtName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
+                    let token = jsonwebtoken_1.default.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
                     return res.json({
                         message: 'Login Successful!',
                         user: await userInfo(req, user),
@@ -82,14 +82,14 @@ async function login(req, res) {
                     });
                 }
                 else {
-                    return res.json({
+                    return res.status(400).json({
                         message: 'Password does not matched'
                     });
                 }
             });
         }
         else {
-            return res.json({
+            return res.status(400).json({
                 message: 'No user found!'
             });
         }
@@ -111,7 +111,7 @@ async function getUser(req, res, next) {
 }
 async function updateUser(req, res) {
     if (req.body.fisrtName != null) {
-        res.user.fisrtName = req.body.fisrtName;
+        res.user.firstName = req.body.firstName;
         try {
             const updateUser = await res.user.save();
             res.json(updateUser);

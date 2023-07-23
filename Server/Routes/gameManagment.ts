@@ -15,7 +15,9 @@ const gameManagmentController = require('../Controllers/gameManagment')
 
 
   router.post('/time/finalcharge', gameManagmentController.startGame)
-  //router.post('/time/finalduration', gameManagmentController.finalDuration)
+  router.get('/time/finalduration', gameManagmentController.getDurationTime)
+  router.post('/time/finalprice', gameManagmentController.getFinalPrice)
+
 
 
 
@@ -28,6 +30,14 @@ router.get('/gameCharges/list', gameManagmentController.gameListOfCharges)
 //MILDWARE GAME CHARGES
 router.get('/gameCharges/:id', gameManagmentController.getGameCharge, (req: any, res: any) => {
     res.json(res.gameCharge)
+
+})
+
+
+//MILDWARE GAME 
+ router.get('/gameactive/:id', gameManagmentController.getActiveGame, (req: any, res: any) => {
+  
+  res.json(res.gameactive)
 
 })
 

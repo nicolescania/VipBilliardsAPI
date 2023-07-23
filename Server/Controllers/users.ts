@@ -5,6 +5,7 @@ import { error } from "console";
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import { json } from "stream/consumers";
 
 
 
@@ -61,7 +62,7 @@ async function save(userInfo: any,) {
     try {
         const User = new Users({
 
-            fisrtName: userInfo.fisrtName,
+            firstName: userInfo.firstName,
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
             password: userInfo.password,
@@ -116,7 +117,7 @@ async function userInfo(req: any, userinfo: any) {
 
 async function login(req: any, res: any) {
 
-
+         
   
         await Users.findOne({ emailAddress: req.body.emailAddress })  
         .then(user => {
@@ -130,7 +131,7 @@ async function login(req: any, res: any) {
                     }
                     if (result) {
 
-                        let token = jwt.sign({ name: user.fisrtName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' })
+                        let token = jwt.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' })
 
                         return res.json({
                             message: 'Login Successful!',
@@ -139,13 +140,13 @@ async function login(req: any, res: any) {
                         })
 
                     } else {
-                        return res.json({
+                        return res.status(400).json({
                             message: 'Password does not matched'
                         })
                     }
                 })
             } else {
-                return res.json({
+                return res.status(400).json({
                     message: 'No user found!'
                 })
             }
@@ -182,7 +183,7 @@ async function getUser(req: any, res: any, next: any) {
 async function updateUser(req: any, res: any) {
     if (req.body.fisrtName != null) {
 
-        res.user.fisrtName = req.body.fisrtName
+        res.user.firstName = req.body.firstName
 
         try {
 
