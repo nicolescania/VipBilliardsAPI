@@ -12,6 +12,7 @@ const userController = require('../Controllers/users')
 
 // Roles router
 
+// List of Roles
 router.get('/roles', async (req, res,) => {
     try {
         const Role = await Roles.find()
@@ -22,13 +23,12 @@ router.get('/roles', async (req, res,) => {
 
 })
 
-
+// Create a new Role
 router.post('/roles', async (req, res) => {
 
     const Role = new Roles({
         name: req.body.name
      
-
     })
     try {
         const newRole = await Role.save()
@@ -37,7 +37,6 @@ router.post('/roles', async (req, res) => {
         res.status(400).json({ message: err })
     }
 
-
 })
 
 
@@ -45,30 +44,29 @@ router.post('/roles', async (req, res) => {
 
 
 // GET USER LIST
-router.get('/users', userController.list)
+router.get('/api/user/list', userController.getUserList)
 
 //CREATE A NEW USER
-router.post('/users', userController.create)
+router.post('/api/user/create', userController.createUser)
 
 // LOGIN USER
-router.post('/login', userController.login)
+router.post('/api/user/login', userController.login)
 
 
 //MILDWARE
 
-router.get('/:id',userController.getUser, (req: any, res: any) => {
+router.get('/user/:id',userController.getUser, (req: any, res: any) => {
     res.json(res.user)
 
 })
 
 //UPDATE USER
 
-router.patch('/:id', userController.getUser, userController.updateUser )
+router.patch('/api/user/update/:id', userController.getUser, userController.updateUser )
 
 //DEETE USER
 
-router.delete('/:id', userController.getUser, userController.deleteUser )
-
+router.delete('/api/user/delte/:id', userController.getUser, userController.deleteUser )
 
 
 function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {

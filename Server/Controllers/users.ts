@@ -11,7 +11,7 @@ import { json } from "stream/consumers";
 
 // GET USER LIST
 
-async function list(req: any, res: any) {
+async function getUserList(req: any, res: any) {
 
     try {
         const User = await Users.find()
@@ -28,25 +28,25 @@ async function list(req: any, res: any) {
 // TRUE == EMAIL ALREADY EXIST
 // FALSE == EMAIL AVAILABLE
 
-async function verifyEmail(emailAddress: String) {
+async function verifyUserEmail(emailAddress: String) {
 
 
-    const verifyEmail = await Users.findOne({ emailAddress: { $eq: emailAddress } })
+    const verifyUserEmail = await Users.findOne({ emailAddress: { $eq: emailAddress } })
 
-    return verifyEmail == null ? false : true;
+    return verifyUserEmail == null ? false : true;
 }
 
 // CREATE USER
 
-async function create(req: any, res: any) {
+async function createUser(req: any, res: any) {
 
     //res.status(200).json(req.body)
 
-    if (await verifyEmail(req.body.emailAddress) == true) {
+    if (await verifyUserEmail(req.body.emailAddress) == true) {
 
         return res.status(400).json("Email exist")
     } else {
-        if (await save(req.body) == true) {
+        if (await saveUser(req.body) == true) {
             return res.status(201).json("user created")
         }
         return res.status(400).json("user no created")
@@ -57,7 +57,7 @@ async function create(req: any, res: any) {
 
 // SAVE USER INFO
 
-async function save(userInfo: any,) {
+async function saveUser(userInfo: any,) {
 
     try {
         const User = new Users({
@@ -106,7 +106,7 @@ async function userInfo(req: any, userinfo: any) {
         })
 
     } catch (error) {
-
+            return error
     }
 
 
@@ -218,7 +218,7 @@ async function deleteUser(req: any, res: any) {
 
 
 
-module.exports = { list, create, login, getUser, updateUser, deleteUser };
+module.exports = { getUserList, createUser, login, getUser, updateUser, deleteUser };
 
 
 

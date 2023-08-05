@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
-async function gameTypeList(req, res) {
+const activeGame_1 = __importDefault(require("../Models/activeGame"));
+async function getGameTypeList(req, res) {
     try {
         const gameType = await gameTypes_1.default.find();
         res.json(gameType);
@@ -14,7 +15,7 @@ async function gameTypeList(req, res) {
         res.status(500).json({ message: err });
     }
 }
-async function gameList(req, res) {
+async function getGameList(req, res) {
     try {
         const game = await game_1.default.find();
         res.json(game);
@@ -65,6 +66,7 @@ async function gameInfo(req, gameinfo) {
         });
     }
     catch (error) {
+        return error;
     }
 }
 async function getGameType(req, res, next) {
@@ -139,5 +141,20 @@ async function deleteGame(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType };
+async function getGameActive(req, res, next) {
+    let gameactive;
+    try {
+        gameactive = await activeGame_1.default.findOne({ game: req.body.gameId });
+        if (gameactive == null) {
+            return res.status(404).json({
+                message: 'Can not find game',
+            });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    return res.json(gameactive);
+}
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, getGameActive, updateGame, deleteGame, gameInfo, findGame, findGameType };
 //# sourceMappingURL=games.js.map

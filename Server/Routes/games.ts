@@ -9,47 +9,47 @@ const gameController = require('../Controllers/games')
 
 
 //GET GAME TYPES LIST
-router.get('/gameTypes/list', gameController.gameTypeList)
+router.get('/api/gametypes/list', gameController.getGameTypeList)
 
 //GET GAMES LIST
-router.get('/gameTypes/gamelist', gameController.gameList)
+router.get('/api/games/list', gameController.getGameList)
 
 
 // CREATE GAME TYPES
-router.post('/gameTypes/create', gameController.createGameType)
+router.post('/api/gametypes/create', gameController.createGameType)
 
 // CREATE GAME
-router.post('/game/create', gameController.createGame)
+router.post('/api/game/create', gameController.createGame)
 
+// TEST
+router.post  ('/game/consulta2', gameController.getGameActive)
 
 
 //MILDWARE GAME TYPES
-router.get('/gameTypes/:id', gameController.getGameType, (req: any, res: any) => {
+router.get('/api/gametypes/:id', gameController.getGameType, (req: any, res: any) => {
     res.json(res.gameType)
 
 })
 
-
 //MILDWARE GAME 
-router.get('/game/:id', gameController.getGame, (req: any, res: any) => {
+router.get('/api/game/:id', gameController.getGame, (req: any, res: any) => {
     res.json(res.game)
 
 })
 
-
 //UPDATE GAME TYPE
-router.patch('/gameTypes/:id', gameController.getGameType, gameController.updateGameType)
+router.patch('/api/gametypes/update/:id', gameController.getGameType, gameController.updateGameType)
 
 //UPDATE GAME 
-router.patch('/game/:id', gameController.getGame, gameController.updateGame)
+router.patch('/api/game/update/:id', gameController.getGame, gameController.updateGame)
 
 
 //DELETE GAME TYPE
-router.delete('/gameTypes/:id', gameController.getGameType, gameController.deleteGameType)
+router.delete('/api/gametypes/:id', gameController.getGameType, gameController.deleteGameType)
 
 
 //DELETE GAME 
-router.delete('/game/:id', gameController.getGame, gameController.deleteGame)
+router.delete('/api/game/delte:id', gameController.getGame, gameController.deleteGame)
 
 
 

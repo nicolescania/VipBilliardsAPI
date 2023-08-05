@@ -2,10 +2,11 @@ import express from "express";
 import gameTypes from '../Models/gameTypes'
 import mongoose from "mongoose";
 import games from '../Models/game'
+import activeGame from '../Models/activeGame'
 
 
 // GET GAME TYPES LIST
-async function gameTypeList(req: any, res: any) {
+async function getGameTypeList(req: any, res: any) {
 
     try {
         const gameType = await gameTypes.find()
@@ -17,7 +18,7 @@ async function gameTypeList(req: any, res: any) {
 }
 
 // GET GAME LIST
-async function gameList(req: any, res: any) {
+async function getGameList(req: any, res: any) {
 
     try {
         const game = await games.find()
@@ -61,7 +62,7 @@ async function createGame(req: any, res: any) {
     const game = new games({
 
         name: req.body.name,
-        gameType:  await findGameType(req.body.gameType) 
+        gameType: await findGameType(req.body.gameType)
 
     })
 
@@ -104,13 +105,13 @@ async function gameInfo(req: any, gameinfo: any) {
 
         return ({
             name: gameinfo.name,
-            gameType: await findGameType(gameinfo.gameType) 
+            gameType: await findGameType(gameinfo.gameType)
 
 
         })
 
     } catch (error) {
-
+        return error
     }
 
 
@@ -238,4 +239,33 @@ async function deleteGame(req: any, res: any) {
 }
 
 
-module.exports = { gameTypeList, createGameType, getGameType, updateGameType, deleteGameType, gameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame,findGameType };
+
+
+async function getGameActive(req: any, res: any, next: any) {
+    let gameactive
+    try {
+
+        gameactive = await activeGame.findOne({ game: req.body.gameId })
+
+        if (gameactive == null) {
+
+            return res.status(404).json({
+                message: 'Can not find game',
+            }
+            )
+        }
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+    return res.json(gameactive)
+
+}
+
+
+
+
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, getGameActive, updateGame, deleteGame, gameInfo, findGame, findGameType };

@@ -7,7 +7,7 @@ const user_1 = __importDefault(require("../Models/user"));
 const roles_1 = __importDefault(require("../Models/roles"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-async function list(req, res) {
+async function getUserList(req, res) {
     try {
         const User = await user_1.default.find();
         res.json(User);
@@ -16,22 +16,22 @@ async function list(req, res) {
         res.status(500).json({ message: err });
     }
 }
-async function verifyEmail(emailAddress) {
-    const verifyEmail = await user_1.default.findOne({ emailAddress: { $eq: emailAddress } });
-    return verifyEmail == null ? false : true;
+async function verifyUserEmail(emailAddress) {
+    const verifyUserEmail = await user_1.default.findOne({ emailAddress: { $eq: emailAddress } });
+    return verifyUserEmail == null ? false : true;
 }
-async function create(req, res) {
-    if (await verifyEmail(req.body.emailAddress) == true) {
+async function createUser(req, res) {
+    if (await verifyUserEmail(req.body.emailAddress) == true) {
         return res.status(400).json("Email exist");
     }
     else {
-        if (await save(req.body) == true) {
+        if (await saveUser(req.body) == true) {
             return res.status(201).json("user created");
         }
         return res.status(400).json("user no created");
     }
 }
-async function save(userInfo) {
+async function saveUser(userInfo) {
     try {
         const User = new user_1.default({
             firstName: userInfo.firstName,
@@ -61,6 +61,7 @@ async function userInfo(req, userinfo) {
         });
     }
     catch (error) {
+        return error;
     }
 }
 async function login(req, res) {
@@ -131,5 +132,5 @@ async function deleteUser(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { list, create, login, getUser, updateUser, deleteUser };
+module.exports = { getUserList, createUser, login, getUser, updateUser, deleteUser };
 //# sourceMappingURL=users.js.map

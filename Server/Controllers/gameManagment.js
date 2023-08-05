@@ -23,7 +23,7 @@ async function startGame(req, res) {
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
-        startDate: Date.now(),
+        startDate: Date.now()
     });
     try {
         const newstartgame = await startgame.save();
@@ -45,15 +45,6 @@ function amount(amountPerHour, amountPerMinute, totalDuration) {
     }
     return totalDuration * amountPerMinute;
 }
-async function getDurationTime(req, res) {
-    let startDate = new Date('2023-07-10 20:30:00');
-    let endDate = new Date('2023-07-10 22:30:00');
-    const differenceInMilliseconds = endDate - startDate;
-    const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
-    const differenceInHours = Math.floor(differenceInMinutes / 60);
-    let totalduration = differenceInMinutes;
-    return res.json(totalduration);
-}
 async function gameActive(chargesDetailsId, gameId) {
     const gameActive = new activeGame_1.default({
         gameChargeDetails: chargesDetailsId,
@@ -65,40 +56,6 @@ async function gameActive(chargesDetailsId, gameId) {
     }
     catch (err) {
         return ({ message: err });
-    }
-}
-async function getFinalPrice(req, res) {
-    let finalTime = await getDurationTime(req, res);
-    let newstartgameId = req.params.newstartgameId;
-    let gameInfoId = req.params.gameInfoId;
-    let game_active = await gameActive(newstartgameId, gameInfoId);
-    return res.json(game_active);
-}
-async function getActiveGame(req, res, next) {
-    let gameactive;
-    try {
-        gameactive = await activeGame_1.default.findById(req.params.id);
-        if (gameactive == null) {
-            return res.status(404).json({ message: 'Can not find game' });
-        }
-    }
-    catch (err) {
-        return res.status(500).json({ message: err });
-    }
-    res.gameactive = gameactive;
-    next();
-}
-async function updateGameActive(req, res) {
-    let finalTime = await getDurationTime(req, res);
-    if (req.body.gameChargeDetails != null) {
-        res.gameactive.gameChargeDetails = req.body.gameChargeDetails;
-        try {
-            const updateGameactive = await res.gameactive.save();
-            res.json(updateGameactive);
-        }
-        catch (error) {
-            res.status(400).json({ message: error });
-        }
     }
 }
 async function gameListOfCharges(req, res) {
@@ -121,8 +78,8 @@ async function getGameCharge(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    res.gameCharge = gameCharge.game;
+    res.gameCharge = gameCharge;
     next();
 }
-module.exports = { startGame, gameListOfCharges, getGameCharge, getDurationTime, getFinalPrice, getActiveGame };
+module.exports = { startGame, gameListOfCharges, getGameCharge, };
 //# sourceMappingURL=gameManagment.js.map

@@ -28,14 +28,14 @@ router.post('/roles', async (req, res) => {
         res.status(400).json({ message: err });
     }
 });
-router.get('/users', userController.list);
-router.post('/users', userController.create);
-router.post('/login', userController.login);
-router.get('/:id', userController.getUser, (req, res) => {
+router.get('/api/user/list', userController.getUserList);
+router.post('/api/user/create', userController.createUser);
+router.post('/api/user/login', userController.login);
+router.get('/user/:id', userController.getUser, (req, res) => {
     res.json(res.user);
 });
-router.patch('/:id', userController.getUser, userController.updateUser);
-router.delete('/:id', userController.getUser, userController.deleteUser);
+router.patch('/api/user/update/:id', userController.getUser, userController.updateUser);
+router.delete('/api/user/delte/:id', userController.getUser, userController.deleteUser);
 function DisplayHomePage(req, res, next) {
     res.render('index', { title: 'Home', page: 'home' });
 }
