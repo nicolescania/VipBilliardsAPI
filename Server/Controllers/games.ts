@@ -241,31 +241,8 @@ async function deleteGame(req: any, res: any) {
 
 
 
-async function getGameActive(req: any, res: any, next: any) {
-    let gameactive
-    try {
-
-        gameactive = await activeGame.findOne({ game: req.body.gameId })
-
-        if (gameactive == null) {
-
-            return res.status(404).json({
-                message: 'Can not find game',
-            }
-            )
-        }
-
-    } catch (err) {
-
-        return res.status(500).json({ message: err })
-
-    }
-
-    return res.json(gameactive)
-
-}
 
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, getGameActive, updateGame, deleteGame, gameInfo, findGame, findGameType };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType };

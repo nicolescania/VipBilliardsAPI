@@ -8,11 +8,11 @@ import activeGame from '../Models/activeGame'
 
 const gameManagmentController = require('../Controllers/gameManagment')
 
-
-  router.post('/time/finalcharge', gameManagmentController.startGame)
-  //router.post('/time/finalduration', gameManagmentController.finalDuration)
-
-
+ // START GAME
+  router.post('api/game/start-game', gameManagmentController.startGame)
+  // GET GAME ACTIVE
+  router.post('/api/game/game-active', gameManagmentController.getGameActive)
+ 
 // GET LIST OF CHARGES
 router.get('/gameCharges/list', gameManagmentController.gameListOfCharges)
 

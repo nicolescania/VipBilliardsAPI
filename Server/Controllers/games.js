@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
-const activeGame_1 = __importDefault(require("../Models/activeGame"));
 async function getGameTypeList(req, res) {
     try {
         const gameType = await gameTypes_1.default.find();
@@ -141,20 +140,5 @@ async function deleteGame(req, res) {
         res.status(500).json({ message: err });
     }
 }
-async function getGameActive(req, res, next) {
-    let gameactive;
-    try {
-        gameactive = await activeGame_1.default.findOne({ game: req.body.gameId });
-        if (gameactive == null) {
-            return res.status(404).json({
-                message: 'Can not find game',
-            });
-        }
-    }
-    catch (err) {
-        return res.status(500).json({ message: err });
-    }
-    return res.json(gameactive);
-}
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, getGameActive, updateGame, deleteGame, gameInfo, findGame, findGameType };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType };
 //# sourceMappingURL=games.js.map

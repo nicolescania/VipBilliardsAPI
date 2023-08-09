@@ -12,8 +12,6 @@ const gameController = require('../Controllers/games')
 
 
 // GET DATE FORMATTED
-
-
 const getFormattedDate = (date: any) => {
 
 
@@ -40,20 +38,18 @@ const getFormattedDate = (date: any) => {
     // prints date & time in YYYY-MM-DD HH:MM:SS format
     return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
 
-
-
-
 };
 
-async function startGame(req: any, res: any) {
 
+
+async function startGame(req: any, res: any) {
 
 
     let gameInfo = await gameController.findGame(req.body.gameId)
 
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-    let totalAmount = amount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65)
    
 
     const startgame = new chargeDetails({
@@ -94,19 +90,19 @@ async function startGame(req: any, res: any) {
 
 
 
+// GET TOTAL CHARGE
 
-
-function amount(amountPerHour: any, amountPerMinute: any, totalDuration: any) {
+function getAmount(amountPerHour: any, amountPerMinute: any, totalDuration: any) {
 
 
     if (totalDuration <= 60) {
         return amountPerHour
-
     }
     return totalDuration * amountPerMinute
 
 }
 
+// SAVE GAME ACTIVE
 async function gameActive( chargesDetailsId: any, gameId: any) {
 
 
@@ -126,6 +122,30 @@ async function gameActive( chargesDetailsId: any, gameId: any) {
     } catch (err) {
         return ({ message: err })
     }
+}
+
+async function getGameActive(req: any, res: any, next: any) {
+    let gameactive
+    try {
+
+        gameactive = await activeGame.findOne({ game: req.body.gameId })
+
+        if (gameactive == null) {
+
+            return res.status(404).json({
+                message: 'Can not find game',
+            }
+            )
+        }
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+    return res.json(gameactive)
+
 }
 
 
@@ -180,4 +200,4 @@ async function getGameCharge(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, gameListOfCharges, getGameCharge, };
+module.exports = { startGame, getGameActive };

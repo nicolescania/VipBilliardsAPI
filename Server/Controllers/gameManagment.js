@@ -19,7 +19,7 @@ const getFormattedDate = (date) => {
 async function startGame(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = amount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
@@ -39,7 +39,7 @@ async function startGame(req, res) {
         res.status(400).json({ message: err });
     }
 }
-function amount(amountPerHour, amountPerMinute, totalDuration) {
+function getAmount(amountPerHour, amountPerMinute, totalDuration) {
     if (totalDuration <= 60) {
         return amountPerHour;
     }
@@ -57,6 +57,21 @@ async function gameActive(chargesDetailsId, gameId) {
     catch (err) {
         return ({ message: err });
     }
+}
+async function getGameActive(req, res, next) {
+    let gameactive;
+    try {
+        gameactive = await activeGame_1.default.findOne({ game: req.body.gameId });
+        if (gameactive == null) {
+            return res.status(404).json({
+                message: 'Can not find game',
+            });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    return res.json(gameactive);
 }
 async function gameListOfCharges(req, res) {
     try {
@@ -81,5 +96,5 @@ async function getGameCharge(req, res, next) {
     res.gameCharge = gameCharge;
     next();
 }
-module.exports = { startGame, gameListOfCharges, getGameCharge, };
+module.exports = { startGame, getGameActive };
 //# sourceMappingURL=gameManagment.js.map
