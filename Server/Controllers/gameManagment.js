@@ -39,6 +39,13 @@ async function startGame(req, res) {
         res.status(400).json({ message: err });
     }
 }
+async function getDurationTime(startDate, endDate) {
+    const differenceInMilliseconds = endDate - startDate;
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
+    const differenceInHours = Math.floor(differenceInMinutes / 60);
+    let totaldurationminutes = differenceInMinutes;
+    return (differenceInMinutes);
+}
 function getAmount(amountPerHour, amountPerMinute, totalDuration) {
     if (totalDuration <= 60) {
         return amountPerHour;
@@ -60,8 +67,10 @@ async function gameActive(chargesDetailsId, gameId) {
 }
 async function getGameActive(req, res, next) {
     let gameactive;
+    let gameInfo = await gameController.findGame(req.body.gameId);
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
     try {
-        gameactive = await activeGame_1.default.findOne({ game: req.body.gameId });
+        gameactive = await activeGame_1.default.findOne({ game: gameInfo });
         if (gameactive == null) {
             return res.status(404).json({
                 message: 'Can not find game',
@@ -71,7 +80,16 @@ async function getGameActive(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    return res.json(gameactive);
+    let chargesDetails = await findcharge(gameactive.gameChargeDetails);
+    let endDate = Date.now();
+    let time = await getDurationTime(chargesDetails?.startDate, endDate);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time);
+    return res.json({ game: gameInfo.name,
+        type: gameTypesDetails.name,
+        gamestarted: chargesDetails?.startDate,
+        timeplaying: time,
+        charge: totalAmount
+    });
 }
 async function gameListOfCharges(req, res) {
     try {
@@ -93,8 +111,11 @@ async function getGameCharge(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    res.gameCharge = gameCharge;
+    return res.json(gameCharge);
     next();
 }
-module.exports = { startGame, getGameActive };
+async function findcharge(id) {
+    return await chargesDetails_1.default.findById(id);
+}
+module.exports = { startGame, getGameActive, getGameCharge };
 //# sourceMappingURL=gameManagment.js.map

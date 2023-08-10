@@ -90,6 +90,46 @@ async function startGame(req: any, res: any) {
 
 
 
+
+// STOP GAME
+// async function stopGame(req: any, res: any) {
+
+//     try {
+
+//         const finalcharge = await chargeDetails.find()
+//         res.json(finalcharge)
+
+//     } catch (err) {
+
+//         res.status(500).json({ message: err })
+//     }
+
+// }
+
+async function getDurationTime( startDate:any,endDate:any,)
+ {
+
+
+    const differenceInMilliseconds = endDate - startDate;
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
+    const differenceInHours = Math.floor(differenceInMinutes / 60);
+
+    let totaldurationminutes = differenceInMinutes
+     
+
+   // return res.json(totalduration)
+   return (differenceInMinutes)
+
+
+  // return [` you been playing for ${differenceInMinutes} Minutes and ${differenceInHours} Hours `]
+
+
+}
+
+
+
+
+
 // GET TOTAL CHARGE
 
 function getAmount(amountPerHour: any, amountPerMinute: any, totalDuration: any) {
@@ -125,10 +165,18 @@ async function gameActive( chargesDetailsId: any, gameId: any) {
 }
 
 async function getGameActive(req: any, res: any, next: any) {
+
     let gameactive
+
+    let gameInfo = await gameController.findGame(req.body.gameId)
+
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    
+  
     try {
 
-        gameactive = await activeGame.findOne({ game: req.body.gameId })
+        gameactive = await activeGame.findOne({ game: gameInfo})
 
         if (gameactive == null) {
 
@@ -143,8 +191,21 @@ async function getGameActive(req: any, res: any, next: any) {
         return res.status(500).json({ message: err })
 
     }
+  let chargesDetails = await findcharge(gameactive.gameChargeDetails)
+  let endDate = Date.now()
+  let time = await getDurationTime( chargesDetails?.startDate,endDate )
+  let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time)
+ 
 
-    return res.json(gameactive)
+    return res.json({game:gameInfo.name,
+                     type:gameTypesDetails.name,
+                     gamestarted: chargesDetails?.startDate,
+                     timeplaying: time,
+                     charge: totalAmount
+                   
+                     
+                  
+                      })
 
 }
 
@@ -188,8 +249,15 @@ async function getGameCharge(req: any, res: any, next: any) {
     }
 
 
-    res.gameCharge = gameCharge
+ return res.json(gameCharge)
     next()
+
+}
+
+// FIND CHARGE
+async function findcharge(id: any) {
+
+    return await chargeDetails.findById(id)
 
 }
 
@@ -198,6 +266,4 @@ async function getGameCharge(req: any, res: any, next: any) {
 
 
 
-
-
-module.exports = { startGame, getGameActive };
+module.exports = { startGame, getGameActive,getGameCharge };
