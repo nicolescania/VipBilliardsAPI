@@ -164,6 +164,8 @@ async function gameActive( chargesDetailsId: any, gameId: any) {
     }
 }
 
+
+// GET GAME ACTIVE
 async function getGameActive(req: any, res: any, next: any) {
 
     let gameactive
@@ -210,6 +212,29 @@ async function getGameActive(req: any, res: any, next: any) {
 }
 
 
+// CLOSE TABLE 
+
+async function closeGame(req: any, res: any, next: any) {
+   
+
+ 
+    let gameInfo = await gameController.findGame(req.body.gameId)
+    //let game1= await getGameActive(req, res, next)
+    try {
+       
+       
+        res.json({ 
+                    message: 'Game closed'  })
+                    
+    } catch (err) {
+
+        res.status(500).json({ message: 'the rrror is in close game' })
+
+    }
+    await res.game.deleteOne(gameInfo)
+   
+}
+
 
 
 
@@ -244,7 +269,7 @@ async function getGameCharge(req: any, res: any, next: any) {
 
     } catch (err) {
 
-        return res.status(500).json({ message: err })
+        return res.status(500).json({ message: 'the error is in active game' })
 
     }
 
@@ -262,8 +287,40 @@ async function findcharge(id: any) {
 }
 
 
+// MILDWARE GAME ACTIVE
+async function getActivegame(req: any, res: any, next: any) {
+ 
+    let game
+
+    let gameInfo = await gameController.findGame(req.body.gameId)
+
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    
+  
+    try {
+
+        game = await activeGame.findOne({ game: gameInfo})
+
+        if (game == null) {
+            return res.status(404).json({ message: 'Can not find game' }
+            )
+        }
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+
+    res.game = game
+    next()
+
+}
 
 
 
 
-module.exports = { startGame, getGameActive,getGameCharge };
+
+module.exports = { startGame, getGameActive,getGameCharge, closeGame, getActivegame };

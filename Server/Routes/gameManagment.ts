@@ -26,6 +26,15 @@ const gameManagmentController = require('../Controllers/gameManagment')
  })
 
 
+ //MILDWARE ACTIVE GAME
+ router.get('/api/game-active/', gameManagmentController.getActivegame, (req: any, res: any) => {
+  res.json(res.game)
+
+})
+
+
+//DELETE GAME TYPE
+router.delete('/api/close-game/', gameManagmentController.getActivegame, gameManagmentController.closeGame)
 
 
 

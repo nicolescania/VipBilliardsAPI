@@ -11,6 +11,10 @@ router.post('/api/game/game-active', gameManagmentController.getGameActive);
 router.get('/api/game-charges/:id', gameManagmentController.getGameCharge, (req, res) => {
     res.json(res.gameCharge);
 });
+router.get('/api/game-active/', gameManagmentController.getActivegame, (req, res) => {
+    res.json(res.game);
+});
+router.delete('/api/close-game/', gameManagmentController.getActivegame, gameManagmentController.closeGame);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=gameManagment.js.map
