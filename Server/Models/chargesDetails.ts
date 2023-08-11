@@ -27,14 +27,6 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         endDate: { type: Date, require: true, }
 
 
-        /* amount
-- duration
-- startDate
-- endDate
-- holdDuration =
-- holdDateStarted =post
-- isHolded =*/
-
 
     })
 

@@ -84,15 +84,16 @@ async function getGameActive(req, res, next) {
     let endDate = Date.now();
     let time = await getDurationTime(chargesDetails?.startDate, endDate);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time);
-    return res.json({ game: gameInfo.name,
+    return res.json({
+        game: gameInfo.name,
         type: gameTypesDetails.name,
-        gamestarted: chargesDetails?.startDate,
-        timeplaying: time,
+        game_started: chargesDetails?.startDate,
+        time_playing: time,
         charge: totalAmount
     });
 }
-async function closeGame(req, res, next) {
-    let gameInfo = await gameController.findGame(req.body.gameId);
+async function closeGame(req, res, next, gameInfo) {
+    gameInfo = await gameController.findGame(req.body.gameId);
     try {
         res.json({
             message: 'Game closed'
@@ -103,7 +104,7 @@ async function closeGame(req, res, next) {
     }
     await res.game.deleteOne(gameInfo);
 }
-async function gameListOfCharges(req, res) {
+async function getGameListOfCharges(req, res) {
     try {
         const finalcharge = await chargesDetails_1.default.find();
         res.json(finalcharge);
@@ -132,9 +133,8 @@ async function findcharge(id) {
 async function getActivegame(req, res, next) {
     let game;
     let gameInfo = await gameController.findGame(req.body.gameId);
-    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
     try {
-        game = await activeGame_1.default.findOne({ game: gameInfo });
+        let game = await activeGame_1.default.findOne({ game: gameInfo });
         if (game == null) {
             return res.status(404).json({ message: 'Can not find game' });
         }
@@ -145,5 +145,21 @@ async function getActivegame(req, res, next) {
     res.game = game;
     next();
 }
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame };
+async function transferGame(req, res, next) {
+    let gameInfo01 = await gameController.findGame(req.body.gameId01);
+    let gameInfo02 = await gameController.findGame(req.body.gameId02);
+    try {
+        let gameupdated = await activeGame_1.default.updateOne({ game: gameInfo01 }, { $set: { game: gameInfo02 } });
+        if (gameupdated == null) {
+            return res.status(404).json({
+                message: 'Can not find game',
+            });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    return res.json({ message: 'Game transfered successfully' });
+}
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges };
 //# sourceMappingURL=gameManagment.js.map
