@@ -28,10 +28,11 @@ async function startGame(req, res) {
     try {
         const newstartgame = await startgame.save();
         let game_active = await gameActive(newstartgame._id, gameInfo._id);
+        let formattedDate = getFormattedDate(newstartgame.startDate);
         return res.json({
             Game: gameInfo.name,
             Game_Type: gameTypesDetails.name,
-            Date: newstartgame.startDate,
+            Date: formattedDate,
             total_Amount: totalAmount,
         });
     }
@@ -43,8 +44,11 @@ async function getDurationTime(startDate, endDate) {
     const differenceInMilliseconds = endDate - startDate;
     const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
     const differenceInHours = Math.floor(differenceInMinutes / 60);
-    let totaldurationminutes = differenceInMinutes;
-    return (differenceInMinutes);
+    const durationTime = {
+        hours: differenceInHours,
+        minutes: differenceInMinutes
+    };
+    return durationTime;
 }
 function getAmount(amountPerHour, amountPerMinute, totalDuration) {
     if (totalDuration <= 60) {
@@ -83,12 +87,13 @@ async function getGameActive(req, res, next) {
     let chargesDetails = await findcharge(gameactive.gameChargeDetails);
     let endDate = Date.now();
     let time = await getDurationTime(chargesDetails?.startDate, endDate);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes);
+    let formattedDate = getFormattedDate(chargesDetails?.startDate);
     return res.json({
         game: gameInfo.name,
         type: gameTypesDetails.name,
-        game_started: chargesDetails?.startDate,
-        time_playing: time,
+        game_started: formattedDate,
+        time_playing: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
         charge: totalAmount
     });
 }
