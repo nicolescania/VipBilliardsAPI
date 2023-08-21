@@ -26,7 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const activeGameSchema = new mongoose_1.Schema({
     gameChargeDetails: { type: mongoose_1.Schema.Types.ObjectId, ref: 'chargeDetails', required: true },
-    game: { type: mongoose_1.Schema.Types.ObjectId, ref: 'games', required: true }
+    game: { type: mongoose_1.Schema.Types.ObjectId, ref: 'games', required: true },
+    isActive: { type: Boolean, require: true, },
 });
 const Model = mongoose_1.default.model("activeGame", activeGameSchema);
 exports.default = Model;

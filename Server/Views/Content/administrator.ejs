@@ -1,0 +1,43 @@
+
+<div class="container">
+    <h1>Games List</h1>
+
+    <div class="row vh-100 d-flex align-content-center py-0  flex-wrap">
+        <div class="col">
+
+
+ 
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+             
+
+                <th scope="col">Name</th>
+                <th scope="col">Game Type</th>
+     
+               
+            </tr>
+        </thead>
+        <tbody id="booksList">
+            <!-- Repeatable Rows -->
+            <% games.forEach((game) => { %>
+                <!-- Create a new Table Row-->
+           
+
+             <tr>
+               
+                <td><%= game.name %></td>
+                <td><%= game.gameType %></td>
+
+             </tr>
+              
+             
+    
+                <% }); %>
+      
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+

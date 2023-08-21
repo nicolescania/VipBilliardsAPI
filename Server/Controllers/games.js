@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DisplayGameListPage = void 0;
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
 async function getGameTypeList(req, res) {
@@ -140,5 +141,18 @@ async function deleteGame(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType };
+async function DisplayGameListPage(req, res, next) {
+    try {
+        const gamesCollection = await game_1.default.find().exec();
+        const gameinfo = await gameInfo(req, gamesCollection);
+        console.log(gameinfo);
+        res.render('index', { title: 'Administrator', page: 'administrator', games: gameinfo, });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.DisplayGameListPage = DisplayGameListPage;
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage };
 //# sourceMappingURL=games.js.map

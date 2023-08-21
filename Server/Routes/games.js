@@ -19,7 +19,8 @@ router.get('/api/game/:id', gameController.getGame, (req, res) => {
 router.patch('/api/game-types/update/:id', gameController.getGameType, gameController.updateGameType);
 router.patch('/api/game/update/:id', gameController.getGame, gameController.updateGame);
 router.delete('/api/game-types/:id', gameController.getGameType, gameController.deleteGameType);
-router.delete('/api/game/delte:id', gameController.getGame, gameController.deleteGame);
+router.delete('/api/game/delete/:id', gameController.getGame, gameController.deleteGame);
+router.get('/administrator', gameController.DisplayGameListPage);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=games.js.map

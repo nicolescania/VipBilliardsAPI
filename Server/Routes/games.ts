@@ -49,14 +49,15 @@ router.delete('/api/game-types/:id', gameController.getGameType, gameController.
 
 
 //DELETE GAME 
-router.delete('/api/game/delte:id', gameController.getGame, gameController.deleteGame)
+router.delete('/api/game/delete/:id', gameController.getGame, gameController.deleteGame)
 
 
 
 
 
 
-
+/* Display Books List Page */
+ router.get('/administrator',  gameController.DisplayGameListPage);
 
 module.exports = router
 

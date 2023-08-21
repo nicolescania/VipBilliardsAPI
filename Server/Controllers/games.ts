@@ -239,10 +239,31 @@ async function deleteGame(req: any, res: any) {
 }
 
 
+// ADMINISTRATOR VIEW
+
+export async function DisplayGameListPage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
+{
+    try {
+
+        //     let id 
+        // const gameType = await findGameType(id)
+         const gamesCollection = await games.find().exec();
+         const gameinfo = await gameInfo(req,gamesCollection)
+         console.log(gameinfo)
+     
+
+       res.render('index', { title: 'Administrator', page: 'administrator', games:gameinfo,   });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
 
 
 
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType };
+
+
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage };
