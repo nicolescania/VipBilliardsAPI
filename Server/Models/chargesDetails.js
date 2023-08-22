@@ -30,8 +30,8 @@ const chargeDetailsSchema = new mongoose_1.Schema({
     duration: { type: Number, require: true, },
     startDate: { type: Date, },
     endDate: { type: Date, require: true, },
-    holdTimeStarted: { type: Date, require: true, },
-    holdTime: { type: Date, required: true }
+    holdTimeStarted: { type: Date, },
+    holdTime: { type: Date, }
 });
 const Model = mongoose_1.default.model("chargeDetails", chargeDetailsSchema);
 exports.default = Model;

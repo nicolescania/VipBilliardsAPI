@@ -9,7 +9,8 @@ const gameManagmentController = require('../Controllers/gameManagment');
 router.post('/api/game/start-game', gameManagmentController.startGame);
 router.post('/api/game/game-active', gameManagmentController.getGameActive);
 router.post('/api/transfer-game', gameManagmentController.transferGame);
-router.get('api/game-charges/list', gameManagmentController.getGameListOfCharges);
+router.post('/api/hold-game', gameManagmentController.holdGame);
+router.get('/api/game-charges/list', gameManagmentController.getGameListOfCharges);
 router.get('/api/game-charges/:id', gameManagmentController.getGameCharge, (req, res) => {
     res.json(res.gameCharge);
 });

@@ -10,16 +10,19 @@ const gameManagmentController = require('../Controllers/gameManagment')
 
  // START GAME
   router.post('/api/game/start-game', gameManagmentController.startGame)
+
   // GET GAME ACTIVE
-  router.post('/api/game/game-active', gameManagmentController.getGameActive)
+ router.post('/api/game/game-active', gameManagmentController.getGameActive)
 
    // TRANSFER GAME
  router.post('/api/transfer-game', gameManagmentController.transferGame)
 
- 
+    // HOLD GAME
+ router.post('/api/hold-game', gameManagmentController.holdGame)
+
 
 // GET LIST OF CHARGES
- router.get('api/game-charges/list', gameManagmentController.getGameListOfCharges)
+ router.get('/api/game-charges/list', gameManagmentController.getGameListOfCharges)
 
 
 //MILDWARE GAME CHARGES

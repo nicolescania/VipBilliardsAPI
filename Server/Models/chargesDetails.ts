@@ -27,8 +27,8 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         duration: { type: Number, require: true, },
         startDate:{  type: Date, },
         endDate: { type: Date, require: true, },
-        holdTimeStarted: {type: Date, require: true, },
-        holdTime: {type: Date, required: true}
+        holdTimeStarted: {type: Date,  },
+        holdTime: {type: Date, }
 
 
 

@@ -61,15 +61,19 @@ async function startGame(req: any, res: any) {
         amount: totalAmount,
 
         // Time that game started
-        startDate: Date.now()
+        startDate: Date.now(),
+
+
+
+        
 
     })
 
     try {
 
         const newstartgame = await startgame.save()
-
-        let game_active = await gameActive(newstartgame._id, gameInfo._id)
+        const STATUS = true
+        let game_active = await gameActive(newstartgame._id, gameInfo._id, STATUS)
         let formattedDate = getFormattedDate(newstartgame.startDate)
         return res.json({
             Game: gameInfo.name,
@@ -126,13 +130,14 @@ function getAmount(amountPerHour: any, amountPerMinute: any, totalDuration: any)
 
 
 // SAVE GAME ACTIVE
-async function gameActive(chargesDetailsId: any, gameId: any) {
+async function gameActive(chargesDetailsId: any, gameId: any, status:any) {
 
 
     const gameActive = new activeGame({
 
         gameChargeDetails: chargesDetailsId,
-        game: gameId
+        game: gameId,
+        isActive: status
 
     })
 
@@ -192,49 +197,56 @@ async function getGameActive(req: any, res: any, next: any) {
 
 }
 
-// HOLD GAME
-// async function resumeGame(req: any, res: any, next: any) {
+//HOLD GAME
+async function holdGame(req: any, res: any, next: any, ) {
+    let holdGame
 
-//     let holdGame
+    let gameInfo = await gameController.findGame(req.body.gameId)
 
-//     let gameInfo = await gameController.findGame(req.body.gameId)
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-//     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+    try {
 
-//     try {
+        holdGame = await activeGame.findOneAndUpdate({ game: gameInfo },{ $set: { isActive: false },  } )
+       
 
-//         holdGame = await activeGame.findOne({ game: gameInfo })
+        if (holdGame == null) {
 
-//         if (holdGame == null) {
+            return res.status(404).json({
+                message: 'Can not find game',
+            }
+            )
+        }
 
-//             return res.status(404).json({
-//                 message: 'Can not find game',
-//             }
-//             )
-//         }
+    } catch (err) {
 
-//     } catch (err) {
+        return res.status(500).json({ message: err })
 
-//         return res.status(500).json({ message: err })
-
-//     }
-//     let chargesDetails = await findcharge(gameactive.gameChargeDetails)
-//     let endDate = Date.now()
-//     let time = await getDurationTime(chargesDetails?.startDate, endDate)
-//     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
-//     let formattedDate = getFormattedDate(chargesDetails?.startDate)
-
-//     return res.json({
-//         game: gameInfo.name,
-//         type: gameTypesDetails.name,
-//         game_started: formattedDate,
-//         time_playing: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
-//         charge: totalAmount
+    }
+    let chargesDetails = await findcharge(holdGame.gameChargeDetails)
+    let endDate = Date.now()
 
 
-//     })
+    let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: endDate },  })
 
-// }
+    
+    let time = await getDurationTime(chargesDetails?.startDate, endDate)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let formattedDatestarted = getFormattedDate(chargesDetails?.startDate)
+    let formattedDateHold = getFormattedDate(chargesDetails?.holdTimeStarted)
+
+    return res.json({
+        game: gameInfo.name,
+        type: gameTypesDetails.name,
+        game_started: formattedDatestarted,
+        time_playing: `You played for ${time.minutes} minutes and ${time.hours} hours`,
+        charge: totalAmount,
+        game_hold: formattedDateHold,
+          
+
+    })
+
+}
 
 
 // CLOSE GAME 
@@ -371,4 +383,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame };
