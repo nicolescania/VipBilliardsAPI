@@ -77,9 +77,9 @@ async function startGame(req: any, res: any) {
         let formattedDate = getFormattedDate(newstartgame.startDate)
         return res.json({
             Game: gameInfo.name,
-            Game_Type: gameTypesDetails.name,
+            GameType: gameTypesDetails.name,
             Date: formattedDate,
-            total_Amount: totalAmount,
+            totalAmount: totalAmount,
 
         });
 
@@ -100,11 +100,14 @@ async function getDurationTime(startDate: any, endDate: any,) {
     const differenceInMilliseconds = endDate - startDate;
     const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
     const differenceInHours = Math.floor(differenceInMinutes / 60);
+   
+
 
 
     const durationTime = {
         hours: differenceInHours,
-        minutes:differenceInMinutes
+        minutes:differenceInMinutes,
+        differenceInMilliseconds
                     
     }
 
@@ -112,7 +115,6 @@ async function getDurationTime(startDate: any, endDate: any,) {
     return durationTime
 
 }
-
 
 
 
@@ -181,6 +183,9 @@ async function getGameActive(req: any, res: any, next: any) {
     }
     let chargesDetails = await findcharge(gameactive.gameChargeDetails)
     let endDate = Date.now()
+    //---------
+    //endDate = endDate - holdTime
+    
     let time = await getDurationTime(chargesDetails?.startDate, endDate)
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
@@ -188,8 +193,8 @@ async function getGameActive(req: any, res: any, next: any) {
     return res.json({
         game: gameInfo.name,
         type: gameTypesDetails.name,
-        game_started: formattedDate,
-        time_playing: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
+        gameStarted: formattedDate,
+        timePlaying: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
         charge: totalAmount
 
 
@@ -200,50 +205,73 @@ async function getGameActive(req: any, res: any, next: any) {
 //HOLD GAME
 async function holdGame(req: any, res: any, next: any, ) {
     let holdGame
-
     let gameInfo = await gameController.findGame(req.body.gameId)
-
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
     try {
-
-        holdGame = await activeGame.findOneAndUpdate({ game: gameInfo },{ $set: { isActive: false },  } )
-       
-
+        holdGame = await activeGame.findOneAndUpdate({ game: gameInfo },{ $set: { isActive: false },  } )    
         if (holdGame == null) {
 
             return res.status(404).json({
                 message: 'Can not find game',
-            }
-            )
+            })
         }
 
     } catch (err) {
-
         return res.status(500).json({ message: err })
-
-    }
-    let chargesDetails = await findcharge(holdGame.gameChargeDetails)
-    let endDate = Date.now()
-
-
-    let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: endDate },  })
-
+    } 
     
-    let time = await getDurationTime(chargesDetails?.startDate, endDate)
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
-    let formattedDatestarted = getFormattedDate(chargesDetails?.startDate)
-    let formattedDateHold = getFormattedDate(chargesDetails?.holdTimeStarted)
+    let dateNow = Date.now()
+    let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: dateNow },  })
+    let formattedDateHold = getFormattedDate(dateNow)
 
     return res.json({
-        game: gameInfo.name,
-        type: gameTypesDetails.name,
-        game_started: formattedDatestarted,
-        time_playing: `You played for ${time.minutes} minutes and ${time.hours} hours`,
-        charge: totalAmount,
-        game_hold: formattedDateHold,
-          
+        
+       timeHoldStarted:formattedDateHold,       
 
+    })
+
+}
+
+async function test(req:any, res:any)
+{
+      var aMinuteAgo = new Date( Date.now() - 5 )
+
+      return res.json(getFormattedDate(aMinuteAgo))
+}
+
+
+//RESUME GAME
+async function resumeGame(req: any, res: any, next: any, ) {
+    let resumeGame
+    let gameInfo = await gameController.findGame(req.body.gameId)
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    try {
+
+        resumeGame = await activeGame.findOneAndUpdate({ game: gameInfo, isActive:false },{ $set: { isActive: true },  } )
+
+       
+       
+        if (resumeGame == null) {
+
+            return res.status(404).json({
+                message: 'Can not find game',
+            })
+        }
+
+    } catch (err) {
+        return res.status(500).json({ message: err })
+    }
+
+    let chargesDetails = await findcharge(resumeGame.gameChargeDetails)    
+    let dateNow = Date.now() 
+    let holdGameTime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow)    
+    let holdTimeUpdated = await chargeDetails.updateOne({ _id: resumeGame.gameChargeDetails}, { $set: { holdTime: holdGameTime.minutes, holdTimeStarted: null },  })
+
+    return res.json({
+      timeInhold: holdGameTime.minutes,
+     
     })
 
 }
@@ -251,26 +279,46 @@ async function holdGame(req: any, res: any, next: any, ) {
 
 // CLOSE GAME 
 
-async function closeGame(req: any, res: any, next: any, gameInfo: any) {
+async function closeGame(req: any, res: any, next: any,) {
+    let deleteGame
+   let gameInfo = await gameController.findGame(req.body.gameId)
+   let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-    gameInfo = await gameController.findGame(req.body.gameId)
-   
     try {
 
-
-        res.json({
-            message: 'Game closed'
-        })
+         deleteGame = await activeGame.findOne({ game: gameInfo })
+        if (!deleteGame) {
+            return res.status(404).json({ message: 'Game not found' });
+          }
+         // return res.status(200).json({ message: 'Game closed successfully' });
 
     } catch (err) {
 
-        res.status(500).json({ message: 'the rrror is in close game' })
+        res.status(500).json({ message: 'Error deleting game' })
 
     }
-    await res.game.deleteOne(gameInfo)
+    let chargesDetails = await findcharge(deleteGame.gameChargeDetails)
+    let dateNow = Date.now()
+    let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
+    
+    let time = await getDurationTime(chargesDetails?.startDate, finalDate)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: totalAmount, endDate:dateNow },  })
 
+    let formattedDate = getFormattedDate(chargesDetails?.startDate)
+
+
+    let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
+    return res.json({
+    
+       totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
+        message: 'game closed',
+        totalAmount,
+       
+    })
+
+  
 }
-
 
 
 
@@ -321,7 +369,6 @@ async function findcharge(id: any) {
 
 }
 
-
 // MILDWARE GAME ACTIVE
 async function getActivegame(req: any, res: any, next: any) {
    
@@ -348,6 +395,7 @@ async function getActivegame(req: any, res: any, next: any) {
     next()
 
 }
+
 
 
 
@@ -383,4 +431,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test };

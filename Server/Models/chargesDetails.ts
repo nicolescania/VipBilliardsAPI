@@ -10,7 +10,7 @@ interface IchargeDetails extends Document {
     startDate: Date;
     endDate: Date;
     holdTimeStarted: Date
-    holdTime: Date
+    holdTime: Number
 
 
 
@@ -28,7 +28,7 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         startDate:{  type: Date, },
         endDate: { type: Date, require: true, },
         holdTimeStarted: {type: Date,  },
-        holdTime: {type: Date, }
+        holdTime: {type: Number, }
 
 
 

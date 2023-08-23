@@ -20,6 +20,11 @@ const gameManagmentController = require('../Controllers/gameManagment')
     // HOLD GAME
  router.post('/api/hold-game', gameManagmentController.holdGame)
 
+     // RESUME GAME
+     router.post('/api/resume-game', gameManagmentController.resumeGame)
+        // TEST
+         router.get('/api/test', gameManagmentController.test)
+
 
 // GET LIST OF CHARGES
  router.get('/api/game-charges/list', gameManagmentController.getGameListOfCharges)
@@ -38,9 +43,8 @@ const gameManagmentController = require('../Controllers/gameManagment')
 
 })
 
-
 //DELETE GAME TYPE
-router.delete('/api/close-game/', gameManagmentController.getActivegame, gameManagmentController.closeGame)
+router.delete('/api/close-game/',  gameManagmentController.closeGame)
 
 
 
