@@ -8,7 +8,7 @@ const router = express_1.default.Router();
 const gameManagmentController = require('../Controllers/gameManagment');
 router.post('/api/game/start-game', gameManagmentController.startGame);
 router.post('/api/game/game-active', gameManagmentController.getGameActive);
-router.post('/api/transfer-game', gameManagmentController.transferGame);
+router.post('/api/game/transfer-game', gameManagmentController.transferGame);
 router.post('/api/hold-game', gameManagmentController.holdGame);
 router.post('/api/resume-game', gameManagmentController.resumeGame);
 router.get('/api/test', gameManagmentController.test);
@@ -19,7 +19,7 @@ router.get('/api/game-charges/:id', gameManagmentController.getGameCharge, (req,
 router.get('/api/game-active/', gameManagmentController.getActivegame, (req, res) => {
     res.json(res.game);
 });
-router.delete('/api/close-game/', gameManagmentController.closeGame);
+router.delete('/api/game/close-game', gameManagmentController.closeGame);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=gameManagment.js.map

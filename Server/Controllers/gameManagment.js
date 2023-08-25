@@ -19,11 +19,12 @@ const getFormattedDate = (date) => {
 async function startGame(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 65);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
         startDate: Date.now(),
+        holdTime: 0
     });
     try {
         const newstartgame = await startgame.save();
@@ -97,7 +98,8 @@ async function getGameActive(req, res, next) {
         type: gameTypesDetails.name,
         gameStarted: formattedDate,
         timePlaying: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
-        charge: totalAmount
+        charge: totalAmount,
+        gameStatus: gameactive?.isActive
     });
 }
 async function holdGame(req, res, next) {
@@ -155,12 +157,14 @@ async function closeGame(req, res, next) {
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
     try {
         deleteGame = await activeGame_1.default.findOne({ game: gameInfo });
-        if (!deleteGame) {
-            return res.status(404).json({ message: 'Game not found' });
+        if (deleteGame == null) {
+            return res.status(404).json({
+                message: 'Can not find game',
+            });
         }
     }
     catch (err) {
-        res.status(500).json({ message: 'Error deleting game' });
+        return res.status(500).json({ message: err });
     }
     let chargesDetails = await findcharge(deleteGame.gameChargeDetails);
     let dateNow = Date.now();
@@ -174,6 +178,7 @@ async function closeGame(req, res, next) {
         totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
         message: 'game closed',
         totalAmount,
+        finalDate
     });
 }
 async function getGameListOfCharges(req, res) {
