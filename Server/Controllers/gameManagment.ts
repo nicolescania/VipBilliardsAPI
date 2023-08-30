@@ -9,7 +9,15 @@ const gameController = require('../Controllers/games')
 
 
 
-
+function formatMoney(amount: number, currencySymbol: string = "$"): string {
+    const options = {
+        style: "currency",
+        currency: "CAD", // Canadian Dollar
+        minimumFractionDigits: 2,
+    };
+    const formatter = new Intl.NumberFormat("en-CA", options);
+    return formatter.format(amount);
+}
 
 // GET DATE FORMATTED
 const getFormattedDate = (date: any) => {
@@ -191,13 +199,14 @@ async function getGameActive(req: any, res: any, next: any) {
     let time = await getDurationTime(chargesDetails?.startDate, endDate)
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
+    let totalAmountFormatted = formatMoney(totalAmount)
 
     return res.json({
         game: gameInfo.name,
         type: gameTypesDetails.name,
         gameStarted: formattedDate,
         timePlaying: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
-        charge: totalAmount,
+        charge: totalAmountFormatted,
         gameStatus: gameactive?.isActive
 
 
@@ -308,20 +317,67 @@ async function closeGame(req: any, res: any, next: any,) {
     let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: totalAmount, endDate:dateNow },  })
 
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
-
+    let totalAmountFormatted = formatMoney(totalAmount)
 
    let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
     return res.json({
     
        totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
         message: 'game closed',
-        totalAmount,
+        totalAmountFormatted,
         finalDate
     })
 
   
 }
 
+
+
+// FREE GAME 
+
+async function setFreeGame(req: any, res: any, next: any,) {
+
+    let freeGame
+   let gameInfo = await gameController.findGame(req.body.gameId)
+   let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    try {
+
+        freeGame = await activeGame.findOne({ game: gameInfo })
+         if (freeGame == null) {
+
+            return res.status(404).json({
+                message: 'Can not find game',
+            })
+        }
+
+    } catch (err) {
+        return res.status(500).json({ message: err })
+    }
+    let chargesDetails = await findcharge(freeGame.gameChargeDetails)
+    let dateNow = Date.now()
+    let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
+    
+    let time = await getDurationTime(chargesDetails?.startDate, finalDate)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let amountUpdated = await chargeDetails.updateOne({ _id: freeGame.gameChargeDetails}, { $set: { amount: 0, endDate:dateNow },  })
+ 
+    let freeamount = await findcharge(freeGame.gameChargeDetails)
+    let formattedDate = getFormattedDate(chargesDetails?.startDate)
+
+
+   //let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
+    return res.json({
+    
+       totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
+        message: 'game closed',
+        finalDate,
+       
+        amount: freeamount?.amount
+    })
+
+  
+}
 
 
 // GET LIST OF CHARGES
@@ -433,4 +489,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame };

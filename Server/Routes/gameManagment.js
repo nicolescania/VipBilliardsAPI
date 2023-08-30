@@ -20,6 +20,7 @@ router.get('/api/game-active/', gameManagmentController.getActivegame, (req, res
     res.json(res.game);
 });
 router.delete('/api/game/close-game', gameManagmentController.closeGame);
+router.delete('/api/game/free-game', gameManagmentController.setFreeGame);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=gameManagment.js.map
