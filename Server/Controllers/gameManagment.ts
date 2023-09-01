@@ -20,7 +20,7 @@ function formatMoney(amount: number, currencySymbol: string = "$"): string {
 }
 
 // GET DATE FORMATTED
-const getFormattedDate = (date: any) => {
+const getFormattedDate1 = (date: any) => {
 
 
     date = new Date(date);
@@ -48,8 +48,51 @@ const getFormattedDate = (date: any) => {
 
 };
 
-// START GAME
 
+const getFormattedDate = (date: any) => {
+    const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    date = new Date(date);
+
+    // Adjust 0 before single digit date
+    let day = ("0" + date.getDate()).slice(-2);
+
+    // Current month name
+    let monthName = monthNames[date.getMonth()];
+
+    // Current year
+    let year = date.getFullYear();
+
+    // Current hours (in 12-hour format)
+    let hours = date.getHours();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = (hours % 12 || 12).toString().padStart(2, '0'); // Convert to 12-hour format and ensure two digits
+
+    // Current minutes
+    let minutes = date.getMinutes().toString().padStart(2, '0'); // Ensure two digits
+
+    // Current seconds
+    let seconds = date.getSeconds().toString().padStart(2, '0'); // Ensure two digits
+
+    // Create the formatted date object
+    const formattedDate = {
+        month: monthName,
+        day: day,
+        year: year,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        ampm: ampm
+    };
+
+    return formattedDate;
+};
+
+
+// START GAME
 async function startGame(req: any, res: any) {
 
 
@@ -71,12 +114,7 @@ async function startGame(req: any, res: any) {
         // Time that game started
         startDate: Date.now(),
 
-        holdTime: 0
-
-
-
-        
-
+        holdTime: 0     
     })
 
     try {
@@ -98,8 +136,51 @@ async function startGame(req: any, res: any) {
         res.status(400).json({ message: err })
     }
 
+}
+
+// START GAME
+async function startGameByMinute(req: any, res: any) {
 
 
+    let gameInfo = await gameController.findGame(req.body.gameId)
+
+    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+
+    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0)
+
+
+    const startgame = new chargeDetails({
+
+        // Game Info
+        game: gameInfo,
+
+        // total Amount
+        amount: totalAmount,
+
+        // Time that game started
+        startDate: Date.now(),
+
+        holdTime: 0     
+    })
+
+    try {
+
+        const newstartgame = await startgame.save()
+        const STATUS = true
+        let game_active = await gameActive(newstartgame._id, gameInfo._id, STATUS)
+        let formattedDate = getFormattedDate(newstartgame.startDate)
+        return res.json({
+            Game: gameInfo.name,
+            GameType: gameTypesDetails.name,
+            Date: formattedDate,
+            totalAmount: totalAmount,
+
+        });
+
+
+    } catch (err) {
+        res.status(400).json({ message: err })
+    }
 
 }
 
@@ -180,7 +261,8 @@ async function getGameActive(req: any, res: any, next: any) {
 
         if (gameactive == null) {
 
-            return res.status(404).json({
+            return res.status(200).json({
+                gameActiveExist: false,
                 message: 'Can not find game',
             }
             )
@@ -193,21 +275,28 @@ async function getGameActive(req: any, res: any, next: any) {
     }
     let chargesDetails = await findcharge(gameactive.gameChargeDetails)
     let endDate = Date.now()
-    //---------
-    //endDate = endDate - holdTime
-    
-    let time = await getDurationTime(chargesDetails?.startDate, endDate)
+
+ 
+    let time = await getValidationTime(chargesDetails?.holdTime,chargesDetails?.startDate, endDate, chargesDetails?.holdTimeStarted)
+
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
     let totalAmountFormatted = formatMoney(totalAmount)
+    let holdTimeStarted = getFormattedDate(chargesDetails?.holdTimeStarted)
+    let holdTime = await getDurationTime(chargesDetails?.holdTimeStarted, endDate)
 
     return res.json({
+        
+        gameActiveExist: true,
         game: gameInfo.name,
         type: gameTypesDetails.name,
-        gameStarted: formattedDate,
-        timePlaying: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
+        gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}` , 
+        timePlaying: `${time.hours} hours, ${time.minutes} minutes`,
         charge: totalAmountFormatted,
-        gameStatus: gameactive?.isActive
+        gameStatus: gameactive?.isActive,
+        holdTimeStarted,
+        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`
+
 
 
     })
@@ -236,10 +325,18 @@ async function holdGame(req: any, res: any, next: any, ) {
     let dateNow = Date.now()
     let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: dateNow },  })
     let formattedDateHold = getFormattedDate(dateNow)
+    let chargesDetails = await findcharge(holdGame.gameChargeDetails)   
+    let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted) 
+    let Holdtime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let timeStarted = getFormattedDate(chargesDetails?.startDate)
+
 
     return res.json({
-        
-       timeHoldStarted:formattedDateHold,       
+        timeStarted: timeStarted,
+        time: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
+        Holdtime: `You have been playing for ${Holdtime.minutes} minutes and ${Holdtime.hours} hours`, 
+        totalAmount     
 
     })
 
@@ -250,6 +347,19 @@ async function test(req:any, res:any)
       var aMinuteAgo = new Date( Date.now() - 5 )
 
       return res.json(getFormattedDate(aMinuteAgo))
+}
+
+
+ async function getValidationTime(chargesDetailsHoldTime: any, chargesDetailStartDated:any, endDate:any, chargesDetailsHoldTimeStarted:any){
+
+    if (chargesDetailsHoldTime== 0){
+        let time = await getDurationTime(chargesDetailStartDated, endDate)
+        return time
+    } else {
+        let time = await getDurationTime(chargesDetailStartDated, chargesDetailsHoldTimeStarted )
+        return time
+
+    }
 }
 
 
@@ -366,7 +476,7 @@ async function setFreeGame(req: any, res: any, next: any,) {
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
 
 
-   //let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
+   let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
     return res.json({
     
        totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
