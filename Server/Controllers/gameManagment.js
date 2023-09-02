@@ -53,12 +53,13 @@ const getFormattedDate = (date) => {
 async function startGame(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60, true);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
         startDate: Date.now(),
-        holdTime: 0
+        holdTime: 0,
+        minimunChargeCondition: true
     });
     try {
         const newstartgame = await startgame.save();
@@ -79,12 +80,13 @@ async function startGame(req, res) {
 async function startGameByMinute(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0);
+    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0, false);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
         startDate: Date.now(),
-        holdTime: 0
+        holdTime: 0,
+        minimunChargeCondition: false
     });
     try {
         const newstartgame = await startgame.save();
@@ -113,11 +115,16 @@ async function getDurationTime(startDate, endDate) {
     };
     return durationTime;
 }
-function getAmount(amountPerHour, amountPerMinute, totalDuration) {
-    if (totalDuration <= 60) {
+function getAmount(amountPerHour, amountPerMinute, totalDuration, perhour) {
+    if (perhour == true && totalDuration <= 60) {
         return amountPerHour;
     }
-    return totalDuration * amountPerMinute;
+    if (perhour == true && totalDuration >= 60) {
+        return totalDuration * amountPerMinute;
+    }
+    if (perhour == false) {
+        return totalDuration * amountPerMinute;
+    }
 }
 async function gameActive(chargesDetailsId, gameId, status) {
     const gameActive = new activeGame_1.default({
@@ -152,7 +159,7 @@ async function getGameActive(req, res, next) {
     let chargesDetails = await findcharge(gameactive.gameChargeDetails);
     let endDate = Date.now();
     let time = await getValidationTime(chargesDetails?.holdTime, chargesDetails?.startDate, endDate, chargesDetails?.holdTimeStarted);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
     let totalAmountFormatted = formatMoney(totalAmount);
     let holdTimeStarted = getFormattedDate(chargesDetails?.holdTimeStarted);
@@ -166,8 +173,15 @@ async function getGameActive(req, res, next) {
         charge: totalAmountFormatted,
         gameStatus: gameactive?.isActive,
         holdTimeStarted,
-        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`
+        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`,
     });
+}
+async function verifyMinimumChargeRequired(minimum) {
+    if (minimum == true) {
+        return true;
+    }
+    else
+        return false;
 }
 async function holdGame(req, res, next) {
     let holdGame;
@@ -190,7 +204,7 @@ async function holdGame(req, res, next) {
     let chargesDetails = await findcharge(holdGame.gameChargeDetails);
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted);
     let Holdtime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
     let timeStarted = getFormattedDate(chargesDetails?.startDate);
     return res.json({
         timeStarted: timeStarted,
@@ -255,7 +269,7 @@ async function closeGame(req, res, next) {
     let dateNow = Date.now();
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
     let amountUpdated = await chargesDetails_1.default.updateOne({ _id: deleteGame.gameChargeDetails }, { $set: { amount: totalAmount, endDate: dateNow }, });
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
     let totalAmountFormatted = formatMoney(totalAmount);
@@ -286,7 +300,7 @@ async function setFreeGame(req, res, next) {
     let dateNow = Date.now();
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes);
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
     let amountUpdated = await chargesDetails_1.default.updateOne({ _id: freeGame.gameChargeDetails }, { $set: { amount: 0, endDate: dateNow }, });
     let freeamount = await findcharge(freeGame.gameChargeDetails);
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
@@ -355,5 +369,5 @@ async function transferGame(req, res, next) {
     }
     return res.json({ message: 'Game transfered successfully' });
 }
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame, startGameByMinute };
 //# sourceMappingURL=gameManagment.js.map

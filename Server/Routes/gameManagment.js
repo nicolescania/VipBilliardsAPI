@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const gameManagmentController = require('../Controllers/gameManagment');
 router.post('/api/game/start-game', gameManagmentController.startGame);
+router.post('/api/game/start-game-by-minute', gameManagmentController.startGameByMinute);
 router.post('/api/game/game-active', gameManagmentController.getGameActive);
 router.post('/api/game/transfer-game', gameManagmentController.transferGame);
 router.post('/api/hold-game', gameManagmentController.holdGame);

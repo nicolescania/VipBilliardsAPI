@@ -11,6 +11,9 @@ const gameManagmentController = require('../Controllers/gameManagment')
 // START GAME
 router.post('/api/game/start-game', gameManagmentController.startGame)
 
+// START GAME BY THE MINUTE
+router.post('/api/game/start-game-by-minute', gameManagmentController.startGameByMinute)
+
 // GET GAME ACTIVE
 router.post('/api/game/game-active', gameManagmentController.getGameActive)
 

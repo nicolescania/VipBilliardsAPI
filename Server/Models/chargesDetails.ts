@@ -11,6 +11,7 @@ interface IchargeDetails extends Document {
     endDate: Date;
     holdTimeStarted: Date
     holdTime: Number
+    minimunChargeCondition:Boolean
 
 
 
@@ -28,7 +29,8 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         startDate:{  type: Date, },
         endDate: { type: Date, require: true, },
         holdTimeStarted: {type: Date,  },
-        holdTime: {type: Number, }
+        holdTime: {type: Number, },
+        minimunChargeCondition:{type: Boolean, required:true}
 
 
 

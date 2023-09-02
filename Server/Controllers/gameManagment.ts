@@ -100,7 +100,8 @@ async function startGame(req: any, res: any) {
 
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60)
+
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60,true)
 
 
     const startgame = new chargeDetails({
@@ -114,7 +115,9 @@ async function startGame(req: any, res: any) {
         // Time that game started
         startDate: Date.now(),
 
-        holdTime: 0     
+        holdTime: 0,
+        
+        minimunChargeCondition: true
     })
 
     try {
@@ -146,7 +149,7 @@ async function startGameByMinute(req: any, res: any) {
 
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0)
+    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0, false)
 
 
     const startgame = new chargeDetails({
@@ -160,7 +163,9 @@ async function startGameByMinute(req: any, res: any) {
         // Time that game started
         startDate: Date.now(),
 
-        holdTime: 0     
+        holdTime: 0  ,
+        
+        minimunChargeCondition: false
     })
 
     try {
@@ -211,13 +216,21 @@ async function getDurationTime(startDate: any, endDate: any,) {
 
 
 // GET TOTAL CHARGE
-function getAmount(amountPerHour: any, amountPerMinute: any, totalDuration: any) {
+function getAmount(amountPerHour: any, amountPerMinute: any, totalDuration: any, perhour:any) {
 
 
-    if (totalDuration <= 60) {
-        return amountPerHour
-    }
-    return totalDuration * amountPerMinute
+    if ( perhour == true && totalDuration <= 60){
+     return amountPerHour
+    } if (perhour == true && totalDuration >= 60) {
+        return totalDuration * amountPerMinute
+    } 
+     if (perhour == false ){
+     return totalDuration * amountPerMinute
+    } 
+                    
+
+
+
 
 }
 
@@ -276,17 +289,15 @@ async function getGameActive(req: any, res: any, next: any) {
     let chargesDetails = await findcharge(gameactive.gameChargeDetails)
     let endDate = Date.now()
 
- 
     let time = await getValidationTime(chargesDetails?.holdTime,chargesDetails?.startDate, endDate, chargesDetails?.holdTimeStarted)
 
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
     let totalAmountFormatted = formatMoney(totalAmount)
     let holdTimeStarted = getFormattedDate(chargesDetails?.holdTimeStarted)
     let holdTime = await getDurationTime(chargesDetails?.holdTimeStarted, endDate)
 
     return res.json({
-        
         gameActiveExist: true,
         game: gameInfo.name,
         type: gameTypesDetails.name,
@@ -295,13 +306,23 @@ async function getGameActive(req: any, res: any, next: any) {
         charge: totalAmountFormatted,
         gameStatus: gameactive?.isActive,
         holdTimeStarted,
-        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`
+        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`,
+
 
 
 
     })
 
 }
+
+
+
+async function verifyMinimumChargeRequired(minimum:Boolean){
+    if (minimum ==  true){
+        return true
+    } else return false
+}
+
 
 //HOLD GAME
 async function holdGame(req: any, res: any, next: any, ) {
@@ -328,7 +349,7 @@ async function holdGame(req: any, res: any, next: any, ) {
     let chargesDetails = await findcharge(holdGame.gameChargeDetails)   
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted) 
     let Holdtime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow)
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
     let timeStarted = getFormattedDate(chargesDetails?.startDate)
 
 
@@ -423,7 +444,7 @@ async function closeGame(req: any, res: any, next: any,) {
     let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
     
     let time = await getDurationTime(chargesDetails?.startDate, finalDate)
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
     let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: totalAmount, endDate:dateNow },  })
 
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
@@ -469,7 +490,7 @@ async function setFreeGame(req: any, res: any, next: any,) {
     let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
     
     let time = await getDurationTime(chargesDetails?.startDate, finalDate)
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes)
+    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
     let amountUpdated = await chargeDetails.updateOne({ _id: freeGame.gameChargeDetails}, { $set: { amount: 0, endDate:dateNow },  })
  
     let freeamount = await findcharge(freeGame.gameChargeDetails)
@@ -599,4 +620,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame,startGameByMinute };
