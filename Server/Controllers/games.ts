@@ -2,6 +2,8 @@ import express from "express";
 import gameTypes from '../Models/gameTypes'
 import mongoose from "mongoose";
 import games from '../Models/game'
+import branches from '../Models/branch'
+
 import activeGame from '../Models/activeGame'
 
 
@@ -52,6 +54,24 @@ async function createGameType(req: any, res: any) {
 
 }
 
+// CREATE GAMETYPE
+async function createLocation(req: any, res: any) {
+
+    const location = new branches({
+
+        name: req.body.name,
+
+    })
+
+    try {
+        const newLocation = await location.save()
+        res.status(201).json(newLocation)
+    } catch (err) {
+        res.status(400).json({ message: err })
+    }
+
+
+}
 
 
 
@@ -62,7 +82,10 @@ async function createGame(req: any, res: any) {
     const game = new games({
 
         name: req.body.name,
-        gameType: await findGameType(req.body.gameType)
+        gameType: await findGameType(req.body.gameType),
+        location: await findlocation(req.body.locationId),
+
+
 
     })
 
@@ -83,6 +106,13 @@ async function findGameType(id: any) {
 
 }
 
+
+// GET LOCATION
+async function findlocation(id: any) {
+
+    return await branches.findById(id)
+
+}
 
 
 // GET GAME 
@@ -266,4 +296,4 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation };

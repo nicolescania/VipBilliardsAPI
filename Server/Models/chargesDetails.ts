@@ -12,6 +12,7 @@ interface IchargeDetails extends Document {
     holdTimeStarted: Date
     holdTime: Number
     minimunChargeCondition:Boolean
+    location: mongoose.Types.ObjectId;
 
 
 
@@ -30,7 +31,9 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         endDate: { type: Date, require: true, },
         holdTimeStarted: {type: Date,  },
         holdTime: {type: Number, },
-        minimunChargeCondition:{type: Boolean, required:true}
+        minimunChargeCondition:{type: Boolean, required:true},
+        //location: { type: Schema.Types.ObjectId, ref: 'branches', required: true }
+
 
 
 

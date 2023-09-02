@@ -26,7 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const gameSchema = new mongoose_1.Schema({
     name: { type: String, require: true },
-    gameType: { type: mongoose_1.Schema.Types.ObjectId, ref: 'gameTypes', required: true }
+    gameType: { type: mongoose_1.Schema.Types.ObjectId, ref: 'gameTypes', required: true },
+    location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'branches', required: true }
 });
 const Model = mongoose_1.default.model("games", gameSchema);
 exports.default = Model;

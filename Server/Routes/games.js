@@ -9,6 +9,7 @@ const gameController = require('../Controllers/games');
 router.get('/api/game-types/list', gameController.getGameTypeList);
 router.get('/api/games/list', gameController.getGameList);
 router.post('/api/game-types/create', gameController.createGameType);
+router.post('/api/game/create-location', gameController.createLocation);
 router.post('/api/game/create', gameController.createGame);
 router.get('/api/game-types/:id', gameController.getGameType, (req, res) => {
     res.json(res.gameType);

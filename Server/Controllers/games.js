@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DisplayGameListPage = void 0;
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
+const branch_1 = __importDefault(require("../Models/branch"));
 async function getGameTypeList(req, res) {
     try {
         const gameType = await gameTypes_1.default.find();
@@ -38,10 +39,23 @@ async function createGameType(req, res) {
         res.status(400).json({ message: err });
     }
 }
+async function createLocation(req, res) {
+    const location = new branch_1.default({
+        name: req.body.name,
+    });
+    try {
+        const newLocation = await location.save();
+        res.status(201).json(newLocation);
+    }
+    catch (err) {
+        res.status(400).json({ message: err });
+    }
+}
 async function createGame(req, res) {
     const game = new game_1.default({
         name: req.body.name,
-        gameType: await findGameType(req.body.gameType)
+        gameType: await findGameType(req.body.gameType),
+        location: await findlocation(req.body.locationId),
     });
     try {
         const newgame = await game.save();
@@ -53,6 +67,9 @@ async function createGame(req, res) {
 }
 async function findGameType(id) {
     return await gameTypes_1.default.findById(id);
+}
+async function findlocation(id) {
+    return await branch_1.default.findById(id);
 }
 async function findGame(id) {
     return await game_1.default.findById(id);
@@ -154,5 +171,5 @@ async function DisplayGameListPage(req, res, next) {
     }
 }
 exports.DisplayGameListPage = DisplayGameListPage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation };
 //# sourceMappingURL=games.js.map

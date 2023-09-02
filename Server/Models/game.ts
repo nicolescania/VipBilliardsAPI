@@ -6,6 +6,8 @@ import { PassportLocalModel } from 'mongoose';
 interface Igame extends Document {
     name: String;
     gameType: mongoose.Types.ObjectId;
+    location: mongoose.Types.ObjectId;
+
 
 
 }
@@ -16,7 +18,8 @@ const gameSchema: Schema<Igame> = new Schema
     ({
 
         name: { type: String, require: true },
-        gameType: { type: Schema.Types.ObjectId, ref: 'gameTypes', required: true }
+        gameType: { type: Schema.Types.ObjectId, ref: 'gameTypes', required: true },
+        location: { type: Schema.Types.ObjectId, ref: 'branches', required: true }
 
     })
 

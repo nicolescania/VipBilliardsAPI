@@ -18,6 +18,9 @@ router.get('/api/games/list', gameController.getGameList)
 // CREATE GAME TYPES
 router.post('/api/game-types/create', gameController.createGameType)
 
+// CREATE LOCATION
+router.post('/api/game/create-location', gameController.createLocation)
+
 // CREATE GAME
 router.post('/api/game/create', gameController.createGame)
 
