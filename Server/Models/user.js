@@ -33,7 +33,8 @@ const UserSchema = new mongoose_1.Schema({
     lastName: { type: String, require: true },
     emailAddress: { type: String, require: true },
     password: { type: String, require: true },
-    role: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Roles', required: true }
+    role: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Roles', required: true },
+    location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'branches', required: true }
 });
 UserSchema.pre('save', function (next) {
     if (!this.isModified('password')) {

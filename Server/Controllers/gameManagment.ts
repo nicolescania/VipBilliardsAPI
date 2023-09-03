@@ -100,7 +100,6 @@ async function startGame(req: any, res: any) {
 
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
-
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60,true)
 
 
@@ -117,7 +116,9 @@ async function startGame(req: any, res: any) {
 
         holdTime: 0,
         
-        minimunChargeCondition: true
+        minimunChargeCondition: true,
+
+        location: gameInfo.location
     })
 
     try {

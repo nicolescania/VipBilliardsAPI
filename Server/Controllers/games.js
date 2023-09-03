@@ -55,7 +55,7 @@ async function createGame(req, res) {
     const game = new game_1.default({
         name: req.body.name,
         gameType: await findGameType(req.body.gameType),
-        location: await findlocation(req.body.locationId),
+        location: await findLocation(req.body.locationId),
     });
     try {
         const newgame = await game.save();
@@ -68,7 +68,7 @@ async function createGame(req, res) {
 async function findGameType(id) {
     return await gameTypes_1.default.findById(id);
 }
-async function findlocation(id) {
+async function findLocation(id) {
     return await branch_1.default.findById(id);
 }
 async function findGame(id) {
@@ -171,5 +171,5 @@ async function DisplayGameListPage(req, res, next) {
     }
 }
 exports.DisplayGameListPage = DisplayGameListPage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation };
 //# sourceMappingURL=games.js.map

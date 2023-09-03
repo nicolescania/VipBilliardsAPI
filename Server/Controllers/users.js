@@ -7,6 +7,7 @@ const user_1 = __importDefault(require("../Models/user"));
 const roles_1 = __importDefault(require("../Models/roles"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const gameController = require('../Controllers/games');
 async function getUserList(req, res) {
     try {
         const User = await user_1.default.find();
@@ -38,7 +39,8 @@ async function saveUser(userInfo) {
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
             password: userInfo.password,
-            role: userInfo.role
+            role: userInfo.role,
+            location: userInfo.location
         });
         const newUser = await User.save();
         return true;
@@ -54,10 +56,11 @@ async function userInfo(req, userinfo) {
     let user;
     try {
         return ({
-            Name: userinfo.fisrtName,
+            Name: userinfo.firstName,
             lastName: userinfo.lastName,
             Email: userinfo.emailAddress,
-            role: await findRole(userinfo.role),
+            Role: await findRole(userinfo.role),
+            location: await gameController.findLocation(userinfo.location),
         });
     }
     catch (error) {
@@ -77,9 +80,7 @@ async function login(req, res) {
                 if (result) {
                     let token = jsonwebtoken_1.default.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
                     return res.json({
-                        message: 'Login Successful!',
                         user: await userInfo(req, user),
-                        token
                     });
                 }
                 else {

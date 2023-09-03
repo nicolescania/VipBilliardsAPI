@@ -32,7 +32,7 @@ const chargeDetailsSchema: Schema<IchargeDetails> = new Schema
         holdTimeStarted: {type: Date,  },
         holdTime: {type: Number, },
         minimunChargeCondition:{type: Boolean, required:true},
-        //location: { type: Schema.Types.ObjectId, ref: 'branches', required: true }
+        location: { type: Schema.Types.ObjectId, ref: 'branches', required: true }
 
 
 

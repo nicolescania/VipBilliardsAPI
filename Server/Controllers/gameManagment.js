@@ -59,7 +59,8 @@ async function startGame(req, res) {
         amount: totalAmount,
         startDate: Date.now(),
         holdTime: 0,
-        minimunChargeCondition: true
+        minimunChargeCondition: true,
+        location: gameInfo.location
     });
     try {
         const newstartgame = await startgame.save();

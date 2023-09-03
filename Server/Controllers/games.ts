@@ -83,7 +83,7 @@ async function createGame(req: any, res: any) {
 
         name: req.body.name,
         gameType: await findGameType(req.body.gameType),
-        location: await findlocation(req.body.locationId),
+        location: await findLocation(req.body.locationId),
 
 
 
@@ -108,7 +108,7 @@ async function findGameType(id: any) {
 
 
 // GET LOCATION
-async function findlocation(id: any) {
+async function findLocation(id: any) {
 
     return await branches.findById(id)
 
@@ -296,4 +296,4 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation };

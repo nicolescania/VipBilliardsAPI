@@ -15,6 +15,8 @@ interface IUser extends Document {
   emailAddress: String;
   password: string;
   role: mongoose.Types.ObjectId;
+  location: mongoose.Types.ObjectId;
+
 
 
 
@@ -29,8 +31,9 @@ const UserSchema: Schema<IUser> = new Schema
     lastName: { type: String, require: true },
     emailAddress: { type: String, require: true },
     password: { type: String, require: true },
-    role: { type: Schema.Types.ObjectId, ref: 'Roles', required: true }
-    //role: { type: Schema.Types.ObjectId, ref: 'Roles' },
+    role: { type: Schema.Types.ObjectId, ref: 'Roles', required: true },
+    location: { type: Schema.Types.ObjectId, ref: 'branches', required: true }
+
 
 
 

@@ -6,16 +6,21 @@ import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import { json } from "stream/consumers";
+import { name } from "ejs";
 
 
+const gameController = require('../Controllers/games')
 
 // GET USER LIST
 
 async function getUserList(req: any, res: any) {
 
+
     try {
         const User = await Users.find()
-        res.json(User)
+        res.json(
+            User
+        )
     } catch (err) {
         res.status(500).json({ message: err })
     }
@@ -66,7 +71,8 @@ async function saveUser(userInfo: any,) {
             lastName: userInfo.lastName,
             emailAddress: userInfo.emailAddress,
             password: userInfo.password,
-            role: userInfo.role
+            role: userInfo.role,
+            location: userInfo.location
 
 
         })
@@ -89,17 +95,24 @@ async function findRole(id: any) {
 
 }
 
+
 async function userInfo(req: any, userinfo: any) {
     let user
+   
 
     try {
 
+       
 
         return ({
-            Name: userinfo.fisrtName,
+            Name: userinfo.firstName,
             lastName: userinfo.lastName,
             Email: userinfo.emailAddress,
-            role: await findRole(userinfo.role),
+            Role: await findRole(userinfo.role),
+            location: await gameController.findLocation(userinfo.location),
+          
+
+
 
 
 
@@ -131,12 +144,15 @@ async function login(req: any, res: any) {
                     }
                     if (result) {
 
-                        let token = jwt.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' })
+                        let token = jwt.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress,  }, 'VerySecretValue', { expiresIn: '1h' })
 
                         return res.json({
-                            message: 'Login Successful!',
-                            user: await userInfo(req, user),
-                            token
+                            //user
+                            // message: 'Login Successful!',
+                             user: await userInfo(req, user),
+
+                            // token
+
                         })
 
                     } else {

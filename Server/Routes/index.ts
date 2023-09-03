@@ -66,7 +66,7 @@ router.patch('/api/user/update/:id', userController.getUser, userController.upda
 
 //DEETE USER
 
-router.delete('/api/user/delte/:id', userController.getUser, userController.deleteUser )
+router.delete('/api/user/delete/:id', userController.getUser, userController.deleteUser )
 
 
 function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {

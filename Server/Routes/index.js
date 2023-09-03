@@ -35,7 +35,7 @@ router.get('/user/:id', userController.getUser, (req, res) => {
     res.json(res.user);
 });
 router.patch('/api/user/update/:id', userController.getUser, userController.updateUser);
-router.delete('/api/user/delte/:id', userController.getUser, userController.deleteUser);
+router.delete('/api/user/delete/:id', userController.getUser, userController.deleteUser);
 function DisplayHomePage(req, res, next) {
     res.render('index', { title: 'Home', page: 'home' });
 }
