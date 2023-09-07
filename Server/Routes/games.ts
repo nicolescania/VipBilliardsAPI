@@ -63,7 +63,8 @@ router.delete('/api/game/delete/:id', gameController.getGame, gameController.del
  router.get('/administrator',  gameController.DisplayGameListPage);
 
 
-
+/* Display Edit Page */
+router.get('/edit/:id', gameController.DisplayEditPage);
 
 module.exports = router
 

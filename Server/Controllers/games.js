@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DisplayGameListPage = void 0;
+exports.DisplayEditPage = exports.DisplayGameListPage = void 0;
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
 const branch_1 = __importDefault(require("../Models/branch"));
@@ -165,7 +165,6 @@ async function DisplayGameListPage(req, res, next) {
             .populate('gameType')
             .populate('location')
             .exec();
-        console.log(gamesCollection);
         res.render('index', { title: 'Administrator', page: 'administrator', games: gamesCollection });
     }
     catch (error) {
@@ -174,5 +173,17 @@ async function DisplayGameListPage(req, res, next) {
     }
 }
 exports.DisplayGameListPage = DisplayGameListPage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, };
+async function DisplayEditPage(req, res, next) {
+    let id = req.params.id;
+    try {
+        const result = await game_1.default.findById(id);
+        res.render('index', { title: 'Administrator', page: 'edit', });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+exports.DisplayEditPage = DisplayEditPage;
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage };
 //# sourceMappingURL=games.js.map

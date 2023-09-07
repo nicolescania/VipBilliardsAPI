@@ -282,10 +282,7 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
          .populate('gameType')
          .populate('location')
          .exec();
-         console.log(gamesCollection)
-
-
-     
+         //console.log(gamesCollection)
 
        res.render('index', { title: 'Administrator', page: 'administrator', games:gamesCollection  });
     } catch (error) {
@@ -294,6 +291,26 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
     }
 }
 
+export async function DisplayEditPage(req: express.Request, res: express.Response, next: express.NextFunction): void 
+{
+  let id = req.params.id;
+
+  // pass the id to the db and read the movie into the edit page
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation, };
+  try {
+    // Use findById to find a document by its ID
+    const result = await games.findById(id);
+
+    res.render('index', { title: 'Administrator', page: 'edit',  });
+
+  } catch (error) {
+    // Handle errors (e.g., database connection error)
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+
+
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage };
