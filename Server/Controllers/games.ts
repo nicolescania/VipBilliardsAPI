@@ -277,12 +277,14 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
 {
     try {
 
-        //     let id 
-        // const gameType = await findGameType(id)
-         const gamesCollection = await games.find().exec();
+     
+         const gamesCollection = await games.find()
+         .populate('gameType')
+         .populate('location')
+         .exec();
          console.log(gamesCollection)
-       //  const gameinfo = await gameInfo(req,gamesCollection)
-       // console.log(gameinfo)
+
+
      
 
        res.render('index', { title: 'Administrator', page: 'administrator', games:gamesCollection  });
@@ -294,9 +296,4 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
 
 
 
-
-
-
-
-
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation, };

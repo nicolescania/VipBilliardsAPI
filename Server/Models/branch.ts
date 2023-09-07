@@ -23,7 +23,7 @@ const brancheSchema: Schema<IBranches> = new Schema
 
 // Step 3- Create a Model using the Schema
 
-const Model = mongoose.model<IBranches>("Branches", brancheSchema);
+const Model = mongoose.model<IBranches>("branches", brancheSchema);
 
 
 // Step 4 - Export the Model -> converts this file into a module

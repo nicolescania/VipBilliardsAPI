@@ -161,7 +161,10 @@ async function deleteGame(req, res) {
 }
 async function DisplayGameListPage(req, res, next) {
     try {
-        const gamesCollection = await game_1.default.find().exec();
+        const gamesCollection = await game_1.default.find()
+            .populate('gameType')
+            .populate('location')
+            .exec();
         console.log(gamesCollection);
         res.render('index', { title: 'Administrator', page: 'administrator', games: gamesCollection });
     }
@@ -171,5 +174,5 @@ async function DisplayGameListPage(req, res, next) {
     }
 }
 exports.DisplayGameListPage = DisplayGameListPage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, };
 //# sourceMappingURL=games.js.map

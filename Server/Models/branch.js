@@ -30,6 +30,6 @@ const brancheSchema = new mongoose_1.Schema({
         require: true
     }
 });
-const Model = mongoose_1.default.model("Branches", brancheSchema);
+const Model = mongoose_1.default.model("branches", brancheSchema);
 exports.default = Model;
 //# sourceMappingURL=branch.js.map
