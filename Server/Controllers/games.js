@@ -79,7 +79,8 @@ async function gameInfo(req, gameinfo) {
     try {
         return ({
             name: gameinfo.name,
-            gameType: await findGameType(gameinfo.gameType)
+            gameType: await findGameType(gameinfo.gameType),
+            location: await findLocation(gameinfo.location),
         });
     }
     catch (error) {
@@ -161,9 +162,8 @@ async function deleteGame(req, res) {
 async function DisplayGameListPage(req, res, next) {
     try {
         const gamesCollection = await game_1.default.find().exec();
-        const gameinfo = await gameInfo(req, gamesCollection);
-        console.log(gameinfo);
-        res.render('index', { title: 'Administrator', page: 'administrator', games: gameinfo, });
+        console.log(gamesCollection);
+        res.render('index', { title: 'Administrator', page: 'administrator', games: gamesCollection });
     }
     catch (error) {
         console.error(error);

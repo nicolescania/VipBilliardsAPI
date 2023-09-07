@@ -135,7 +135,9 @@ async function gameInfo(req: any, gameinfo: any) {
 
         return ({
             name: gameinfo.name,
-            gameType: await findGameType(gameinfo.gameType)
+            gameType: await findGameType(gameinfo.gameType),
+            location: await findLocation(gameinfo.location),
+
 
 
         })
@@ -278,11 +280,12 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
         //     let id 
         // const gameType = await findGameType(id)
          const gamesCollection = await games.find().exec();
-         const gameinfo = await gameInfo(req,gamesCollection)
-         console.log(gameinfo)
+         console.log(gamesCollection)
+       //  const gameinfo = await gameInfo(req,gamesCollection)
+       // console.log(gameinfo)
      
 
-       res.render('index', { title: 'Administrator', page: 'administrator', games:gameinfo,   });
+       res.render('index', { title: 'Administrator', page: 'administrator', games:gamesCollection  });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
