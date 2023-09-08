@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DisplayEditPage = exports.DisplayGameListPage = void 0;
+exports.ProcessDeletePage = exports.ProcessAddPage = exports.DisplayAddPage = exports.ProcessEditPage = exports.DisplayEditPage = exports.DisplayGameListPage = void 0;
 const gameTypes_1 = __importDefault(require("../Models/gameTypes"));
 const game_1 = __importDefault(require("../Models/game"));
 const branch_1 = __importDefault(require("../Models/branch"));
@@ -177,7 +177,8 @@ async function DisplayEditPage(req, res, next) {
     let id = req.params.id;
     try {
         const result = await game_1.default.findById(id);
-        res.render('index', { title: 'Administrator', page: 'edit', });
+        console.log(result);
+        res.render('index', { title: 'Edit', page: 'edit', game: result });
     }
     catch (error) {
         console.error(error);
@@ -185,5 +186,56 @@ async function DisplayEditPage(req, res, next) {
     }
 }
 exports.DisplayEditPage = DisplayEditPage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage };
+async function ProcessEditPage(req, res, next) {
+    try {
+        const id = req.params.id;
+        let updatedGame = new game_1.default({
+            "_id": id,
+            "name": req.body.gameName,
+            "gameType": req.body.gameType,
+            "location": req.body.location
+        });
+        console.log(updatedGame);
+        const result = await game_1.default.updateOne({ _id: id }, updatedGame);
+        res.redirect('/administrator');
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.ProcessEditPage = ProcessEditPage;
+function DisplayAddPage(req, res, next) {
+    res.render('index', { title: 'Add', page: 'edit', game: '', });
+}
+exports.DisplayAddPage = DisplayAddPage;
+async function ProcessAddPage(req, res, next) {
+    const game = new game_1.default({
+        "name": req.body.gameName,
+        "gameType": req.body.gameType,
+        "location": req.body.location
+    });
+    try {
+        const newgame = await game.save();
+        res.redirect('/administrator');
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.ProcessAddPage = ProcessAddPage;
+async function ProcessDeletePage(req, res, next) {
+    try {
+        const id = req.params.id;
+        await game_1.default.deleteOne({ _id: id });
+        res.redirect('/administrator');
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.ProcessDeletePage = ProcessDeletePage;
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage };
 //# sourceMappingURL=games.js.map

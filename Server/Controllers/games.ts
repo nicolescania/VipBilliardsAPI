@@ -277,7 +277,6 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
 {
     try {
 
-     
          const gamesCollection = await games.find()
          .populate('gameType')
          .populate('location')
@@ -291,18 +290,15 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
     }
 }
 
-export async function DisplayEditPage(req: express.Request, res: express.Response, next: express.NextFunction): void 
+export async function DisplayEditPage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
 {
   let id = req.params.id;
-
-  // pass the id to the db and read the movie into the edit page
-
 
   try {
     // Use findById to find a document by its ID
     const result = await games.findById(id);
-
-    res.render('index', { title: 'Administrator', page: 'edit',  });
+    console.log(result)
+    res.render('index', { title: 'Edit', page: 'edit', game:result  });
 
   } catch (error) {
     // Handle errors (e.g., database connection error)
@@ -311,6 +307,84 @@ export async function DisplayEditPage(req: express.Request, res: express.Respons
   }
 }
 
+export async function ProcessEditPage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
+
+{
+    try {
+        const id = req.params.id;
+        let updatedGame = new games
+        ({
+          "_id": id,
+          "name": req.body.gameName,
+          "gameType":req.body.gameType,
+          "location": req.body.location
+          
+        });
+        console.log(updatedGame)
+      
+        const result = await games.updateOne({ _id: id }, updatedGame);
+  
+
+            res.redirect('/administrator');
+
+         
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+export function DisplayAddPage(req: express.Request, res: express.Response, next: express.NextFunction): void 
+{
+  res.render('index', { title: 'Add', page: 'edit', game: '', })
+}
+
+export async function ProcessAddPage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage };
+{
+    const game = new games
+
+    ({
+        "name": req.body.gameName,
+        "gameType":req.body.gameType,
+        "location": req.body.location
+      });
+
+
+      try {
+        const newgame = await game.save()
+        res.redirect('/administrator');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+
+}
+
+
+
+
+
+
+
+
+export async function ProcessDeletePage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
+
+{
+    try {
+        const id = req.params.id;
+        
+        await games.deleteOne({ _id: id });
+        res.redirect('/administrator');
+         
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+
+
+
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage,ProcessDeletePage,ProcessAddPage,DisplayAddPage };

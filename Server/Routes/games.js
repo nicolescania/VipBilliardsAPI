@@ -22,7 +22,10 @@ router.patch('/api/game/update/:id', gameController.getGame, gameController.upda
 router.delete('/api/game-types/:id', gameController.getGameType, gameController.deleteGameType);
 router.delete('/api/game/delete/:id', gameController.getGame, gameController.deleteGame);
 router.get('/administrator', gameController.DisplayGameListPage);
+router.get('/add', gameController.DisplayAddPage);
 router.get('/edit/:id', gameController.DisplayEditPage);
+router.get('/delete/:id', gameController.ProcessDeletePage);
+router.post('/add', gameController.ProcessAddPage);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=games.js.map
