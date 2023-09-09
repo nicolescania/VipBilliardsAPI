@@ -24,6 +24,9 @@ async function getGameList(req: any, res: any) {
 
     try {
         const game = await games.find()
+        .populate('gameType')
+        .populate('location')
+        .exec()
         res.json(game)
     } catch (err) {
         res.status(500).json({ message: err })
@@ -278,7 +281,7 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
     try {
 
          const gamesCollection = await games.find()
-         .populate('game')
+         .populate('gameType')
          .populate('location')
          .exec();
    

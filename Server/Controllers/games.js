@@ -18,7 +18,10 @@ async function getGameTypeList(req, res) {
 }
 async function getGameList(req, res) {
     try {
-        const game = await game_1.default.find();
+        const game = await game_1.default.find()
+            .populate('gameType')
+            .populate('location')
+            .exec();
         res.json(game);
     }
     catch (err) {
@@ -162,7 +165,7 @@ async function deleteGame(req, res) {
 async function DisplayGameListPage(req, res, next) {
     try {
         const gamesCollection = await game_1.default.find()
-            .populate('game')
+            .populate('gameType')
             .populate('location')
             .exec();
         res.render('index', { title: 'Administrator', page: 'administrator', games: gamesCollection });
