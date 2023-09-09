@@ -148,10 +148,9 @@ async function login(req: any, res: any) {
 
                         return res.json({
                             //user
-                            // message: 'Login Successful!',
+                             message: 'Login Successful!',
                              user: await userInfo(req, user),
-
-                            // token
+                             token
 
                         })
 

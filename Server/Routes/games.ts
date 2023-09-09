@@ -66,6 +66,9 @@ router.get('/add', gameController.DisplayAddPage);
 
 /* Display Edit Page */
 router.get('/edit/:id', gameController.DisplayEditPage);
+
+router.post('/edit/:id', gameController.ProcessEditPage);
+
 router.get('/delete/:id', gameController.ProcessDeletePage);
 
 

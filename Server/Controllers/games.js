@@ -162,7 +162,7 @@ async function deleteGame(req, res) {
 async function DisplayGameListPage(req, res, next) {
     try {
         const gamesCollection = await game_1.default.find()
-            .populate('gameType')
+            .populate('game')
             .populate('location')
             .exec();
         res.render('index', { title: 'Administrator', page: 'administrator', games: gamesCollection });
@@ -189,15 +189,17 @@ exports.DisplayEditPage = DisplayEditPage;
 async function ProcessEditPage(req, res, next) {
     try {
         const id = req.params.id;
+        const oldGame = await game_1.default.findById(id);
         let updatedGame = new game_1.default({
             "_id": id,
             "name": req.body.gameName,
             "gameType": req.body.gameType,
             "location": req.body.location
         });
-        console.log(updatedGame);
-        const result = await game_1.default.updateOne({ _id: id }, updatedGame);
-        res.redirect('/administrator');
+        game_1.default.updateOne({ _id: id }, updatedGame);
+        {
+            res.redirect('/administrator');
+        }
     }
     catch (error) {
         console.error(error);
@@ -237,5 +239,5 @@ async function ProcessDeletePage(req, res, next) {
     }
 }
 exports.ProcessDeletePage = ProcessDeletePage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage, ProcessEditPage };
 //# sourceMappingURL=games.js.map

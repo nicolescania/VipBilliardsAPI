@@ -80,7 +80,9 @@ async function login(req, res) {
                 if (result) {
                     let token = jsonwebtoken_1.default.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
                     return res.json({
+                        message: 'Login Successful!',
                         user: await userInfo(req, user),
+                        token
                     });
                 }
                 else {

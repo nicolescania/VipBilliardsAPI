@@ -24,6 +24,7 @@ router.delete('/api/game/delete/:id', gameController.getGame, gameController.del
 router.get('/administrator', gameController.DisplayGameListPage);
 router.get('/add', gameController.DisplayAddPage);
 router.get('/edit/:id', gameController.DisplayEditPage);
+router.post('/edit/:id', gameController.ProcessEditPage);
 router.get('/delete/:id', gameController.ProcessDeletePage);
 router.post('/add', gameController.ProcessAddPage);
 module.exports = router;

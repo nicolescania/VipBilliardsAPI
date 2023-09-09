@@ -278,10 +278,10 @@ export async function DisplayGameListPage(req: express.Request, res: express.Res
     try {
 
          const gamesCollection = await games.find()
-         .populate('gameType')
+         .populate('game')
          .populate('location')
          .exec();
-         //console.log(gamesCollection)
+   
 
        res.render('index', { title: 'Administrator', page: 'administrator', games:gamesCollection  });
     } catch (error) {
@@ -310,23 +310,34 @@ export async function DisplayEditPage(req: express.Request, res: express.Respons
 export async function ProcessEditPage(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void>
 
 {
+
+
     try {
         const id = req.params.id;
+        
+        const oldGame = await games.findById(id)
+       
+
+      
         let updatedGame = new games
         ({
-          "_id": id,
+            "_id": id,
           "name": req.body.gameName,
           "gameType":req.body.gameType,
           "location": req.body.location
           
         });
-        console.log(updatedGame)
-      
-        const result = await games.updateOne({ _id: id }, updatedGame);
-  
-
+    
+        games.updateOne({_id: id}, updatedGame)
+        {
+         
+      // edit was successful -> go to the movie-list page
             res.redirect('/administrator');
+      
+        }
 
+
+ 
          
     } catch (error) {
         console.error(error);
@@ -387,4 +398,4 @@ export async function ProcessDeletePage(req: express.Request, res: express.Respo
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage,ProcessDeletePage,ProcessAddPage,DisplayAddPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage,ProcessDeletePage,ProcessAddPage,DisplayAddPage,ProcessEditPage };

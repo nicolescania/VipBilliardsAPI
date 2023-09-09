@@ -87,7 +87,8 @@ async function startGameByMinute(req, res) {
         amount: totalAmount,
         startDate: Date.now(),
         holdTime: 0,
-        minimunChargeCondition: false
+        minimunChargeCondition: false,
+        location: gameInfo.location
     });
     try {
         const newstartgame = await startgame.save();
@@ -313,7 +314,7 @@ async function setFreeGame(req, res, next) {
         amount: freeamount?.amount
     });
 }
-async function getGameListOfCharges(req, res) {
+async function getGameListOfCharges1(req, res) {
     try {
         const finalcharge = await chargesDetails_1.default.find();
         res.json(finalcharge);
@@ -322,6 +323,37 @@ async function getGameListOfCharges(req, res) {
         res.status(500).json({ message: err });
     }
 }
+async function getGameListOfCharges(req, res) {
+    try {
+        const { location } = req.query;
+        const filter = createFilter(location, null);
+        const finalcharge = await fetchGameCharges(filter, 'desc');
+        return res.json(finalcharge);
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+const createFilter = (query, location) => {
+    const filter = {};
+    if (query) {
+        filter.name = { $regex: query, $options: 'i' };
+    }
+    if (location) {
+        filter.location = { $regex: location, $options: 'i' };
+    }
+    return filter;
+};
+const fetchGameCharges = async (filter, sort) => {
+    let query = chargesDetails_1.default.find(filter)
+        .populate('game')
+        .populate('location');
+    if (sort === 'desc') {
+        query = query.sort({ startDate: -1 });
+    }
+    const chargeslist = await query.exec();
+    return chargeslist;
+};
 async function getGameCharge(req, res, next) {
     let gameCharge;
     try {

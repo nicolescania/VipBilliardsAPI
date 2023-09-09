@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import activeGame from '../Models/activeGame'
 import gameTypes from '../Models/gameTypes'
 import games from '../Models/game'
+import { json } from "stream/consumers";
 
 const gameController = require('../Controllers/games')
 
@@ -166,7 +167,10 @@ async function startGameByMinute(req: any, res: any) {
 
         holdTime: 0  ,
         
-        minimunChargeCondition: false
+        minimunChargeCondition: false,
+
+        location: gameInfo.location
+
     })
 
     try {
@@ -514,7 +518,7 @@ async function setFreeGame(req: any, res: any, next: any,) {
 
 
 // GET LIST OF CHARGES
-async function getGameListOfCharges(req: any, res: any) {
+async function getGameListOfCharges1(req: any, res: any) {
 
     try {
         const finalcharge = await chargeDetails.find()
@@ -524,6 +528,71 @@ async function getGameListOfCharges(req: any, res: any) {
     }
 
 }
+
+// GET LIST OF CHARGES
+async function getGameListOfCharges(req: any, res: any) {
+
+    try {
+        const { location } = req.query;
+        const filter = createFilter(location,null );
+        const finalcharge = await fetchGameCharges(filter, 'desc');
+
+   // Check if finalcharge has a 'locations' property
+
+   return res.json(finalcharge);
+
+
+    } catch (err) {
+        res.status(500).json({ message: err })
+    }
+
+
+
+  
+
+
+}
+
+
+
+
+
+
+
+
+// charges List being filter
+const createFilter = (query: any, location: any, ) => {
+
+    const filter: any = {};
+
+    if (query) {
+        filter.name = { $regex: query, $options: 'i' };
+    }
+    if (location) {
+        filter.location = { $regex: location, $options: 'i' };
+    }
+
+    return filter;
+};
+
+
+//charges list filter asc and desc
+
+const fetchGameCharges = async (filter: any, sort: any) => {
+    let query = chargeDetails.find(filter)
+    .populate('game')
+    .populate('location')
+ 
+
+  if (sort === 'desc') {
+        query = query.sort({ startDate: -1 });
+    }
+
+    const chargeslist = await query.exec();
+    return chargeslist;
+};
+
+
 
 
 
