@@ -272,7 +272,7 @@ async function closeGame(req, res, next) {
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
-    let amountUpdated = await chargesDetails_1.default.updateOne({ _id: deleteGame.gameChargeDetails }, { $set: { amount: totalAmount, endDate: dateNow }, });
+    let amountUpdated = await chargesDetails_1.default.updateOne({ _id: deleteGame.gameChargeDetails }, { $set: { amount: totalAmount, endDate: dateNow, duration: time.minutes }, });
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
     let totalAmountFormatted = formatMoney(totalAmount);
     let closeGame = await activeGame_1.default.findOneAndDelete({ game: gameInfo });
