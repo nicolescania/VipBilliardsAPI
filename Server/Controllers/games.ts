@@ -206,6 +206,7 @@ async function updateGameType(req: any, res: any) {
     if (req.body.name != null) {
 
         res.gameType.name = req.body.name
+        res.gameType.pricePerMinute = req.body.pricePerMinute
 
         try {
 

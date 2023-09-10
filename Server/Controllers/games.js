@@ -121,6 +121,7 @@ async function getGame(req, res, next) {
 async function updateGameType(req, res) {
     if (req.body.name != null) {
         res.gameType.name = req.body.name;
+        res.gameType.pricePerMinute = req.body.pricePerMinute;
         try {
             const updateGameType = await res.gameType.save();
             res.json(updateGameType);
