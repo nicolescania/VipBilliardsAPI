@@ -19,6 +19,18 @@ async function getGameTypeList(req: any, res: any) {
 
 }
 
+// GET BRANCHES LIST
+async function getBranchesList(req: any, res: any) {
+
+    try {
+        const branch = await branches.find()
+        res.json(branch)
+    } catch (err) {
+        res.status(500).json({ message: err })
+    }
+
+}
+
 // GET GAME LIST
 async function getGameList(req: any, res: any) {
 
@@ -402,4 +414,4 @@ export async function ProcessDeletePage(req: express.Request, res: express.Respo
 
 
 
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage,ProcessDeletePage,ProcessAddPage,DisplayAddPage,ProcessEditPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame,  updateGame, deleteGame, gameInfo, findGame, findGameType,DisplayGameListPage,createLocation,findLocation,DisplayEditPage,ProcessDeletePage,ProcessAddPage,DisplayAddPage,ProcessEditPage,getBranchesList };

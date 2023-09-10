@@ -8,6 +8,7 @@ const router = express_1.default.Router();
 const gameController = require('../Controllers/games');
 router.get('/api/game-types/list', gameController.getGameTypeList);
 router.get('/api/games/list', gameController.getGameList);
+router.get('/api/branches/list', gameController.getBranchesList);
 router.post('/api/game-types/create', gameController.createGameType);
 router.post('/api/game/create-location', gameController.createLocation);
 router.post('/api/game/create', gameController.createGame);

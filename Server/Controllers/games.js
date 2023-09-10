@@ -16,6 +16,15 @@ async function getGameTypeList(req, res) {
         res.status(500).json({ message: err });
     }
 }
+async function getBranchesList(req, res) {
+    try {
+        const branch = await branch_1.default.find();
+        res.json(branch);
+    }
+    catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
 async function getGameList(req, res) {
     try {
         const game = await game_1.default.find()
@@ -243,5 +252,5 @@ async function ProcessDeletePage(req, res, next) {
     }
 }
 exports.ProcessDeletePage = ProcessDeletePage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage, ProcessEditPage };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage, ProcessEditPage, getBranchesList };
 //# sourceMappingURL=games.js.map

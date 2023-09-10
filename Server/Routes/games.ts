@@ -14,6 +14,10 @@ router.get('/api/game-types/list', gameController.getGameTypeList)
 //GET GAMES LIST
 router.get('/api/games/list', gameController.getGameList)
 
+//GET GAMES LIST
+router.get('/api/branches/list', gameController.getBranchesList)
+
+
 
 // CREATE GAME TYPES
 router.post('/api/game-types/create', gameController.createGameType)
