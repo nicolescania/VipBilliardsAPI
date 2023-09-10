@@ -325,28 +325,38 @@ async function getGameListOfCharges1(req, res) {
 }
 async function getGameListOfCharges(req, res) {
     try {
-        const { query, location, startDate, endDate } = req.query;
-        const filter = createFilter(query, location, startDate, endDate);
-        const finalcharge = await fetchGameCharges(filter, 'desc');
-        return res.json(finalcharge);
+        const charges = await chargesDetails_1.default.find({ location: req.query.locationId, startDate: { $gte: req.query.startDate },
+            endDate: { $lte: req.query.endDate } }).sort({ endDate: -1 })
+            .populate('location')
+            .populate('game')
+            .exec();
+        return res.json(charges);
+        console.log('Cargos encontrados:');
+        console.log(charges);
+    }
+    catch (error) {
+        console.error('Error al buscar cargos:', error);
+    }
+}
+async function getGameListOfCharges1(req, res) {
+    console.log('Query:', req.query);
+    const { location, startDate, endDate } = req.query;
+    const filter = createFilter(location, startDate, endDate);
+    const finalcharge = await fetchGameCharges(filter, 'desc');
+    console.log('Location:', location);
+    console.log('StartDate:', startDate);
+    console.log('EndDate:', endDate);
+    return res.json(finalcharge);
+    try {
     }
     catch (err) {
         res.status(500).json({ message: err });
     }
 }
-const createFilter = (query, location, startDate, endDate) => {
+const createFilter = (location, startDate, endDate) => {
     const filter = {};
-    if (query) {
-        filter.name = { $regex: query, $options: 'i' };
-    }
     if (location) {
         filter.location = { $regex: location, $options: 'i' };
-    }
-    if (startDate && endDate) {
-        filter.endDate = {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
-        };
     }
     return filter;
 };

@@ -530,17 +530,47 @@ async function getGameListOfCharges1(req: any, res: any) {
 
 }
 
-// GET LIST OF CHARGES
-async function getGameListOfCharges(req: any, res: any) {
+
+
+// Función para buscar múltiples registros en la base de datos
+async function getGameListOfCharges(req: any, res:any) {
 
     try {
-        const {query, location, startDate, endDate } = req.query;
-        const filter = createFilter(query,location,startDate, endDate );
-        const finalcharge = await fetchGameCharges(filter, 'desc');
+      // Utiliza el método find() para buscar múltiples registros
+      const charges = await chargeDetails.find({ location: req.query.locationId,  startDate: { $gte: req.query.startDate },
+        endDate: { $lte: req.query.endDate }  }).sort({ endDate: -1 })
+        .populate('location')
+        .populate('game')
+        .exec();
+  
 
-   // Check if finalcharge has a 'locations' property
+      return res.json(charges);
 
-   return res.json(finalcharge);
+      // Imprime los registros encontrados
+      console.log('Cargos encontrados:');
+      console.log(charges);
+    } catch (error) {
+      console.error('Error al buscar cargos:', error);
+    }
+  }
+
+// GET LIST OF CHARGES
+async function getGameListOfCharges1(req: any, res: any) {
+    console.log('Query:', req.query);
+
+    const {location, startDate, endDate } = req.query;
+    const filter = createFilter(location,startDate,endDate );
+    const finalcharge = await fetchGameCharges(filter, 'desc');
+
+    console.log('Location:', location);
+    console.log('StartDate:', startDate);
+    console.log('EndDate:', endDate);
+
+// Check if finalcharge has a 'locations' property
+
+return res.json(finalcharge);
+    try {
+     
 
 
     } catch (err) {
@@ -562,23 +592,21 @@ async function getGameListOfCharges(req: any, res: any) {
 
 
 // charges List being filter
-const createFilter = (query: any, location: any,startDate:any, endDate:any ) => {
+const createFilter = (location: any,startDate:any, endDate:any ) => {
 
     const filter: any = {};
 
-    if (query) {
-        filter.name = { $regex: query, $options: 'i' };
-    }
+
     if (location) {
         filter.location = { $regex: location, $options: 'i' };
     }
-    if (startDate && endDate) {
-        // Assuming endDate and startDate are ISO date strings
-        filter.endDate = {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
-        };
-    }
+    // if (startDate && endDate) {
+    //     // Assuming endDate and startDate are ISO date strings
+    //     filter.endDate = {
+    //         $gte: new Date(startDate),
+    //         $lte: new Date(endDate)
+    //     };
+    // }
 
     return filter;
 };
