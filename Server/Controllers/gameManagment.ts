@@ -534,8 +534,8 @@ async function getGameListOfCharges1(req: any, res: any) {
 async function getGameListOfCharges(req: any, res: any) {
 
     try {
-        const { location } = req.query;
-        const filter = createFilter(location,null );
+        const {query, location, startDate, endDate } = req.query;
+        const filter = createFilter(query,location,startDate, endDate );
         const finalcharge = await fetchGameCharges(filter, 'desc');
 
    // Check if finalcharge has a 'locations' property
@@ -562,7 +562,7 @@ async function getGameListOfCharges(req: any, res: any) {
 
 
 // charges List being filter
-const createFilter = (query: any, location: any, ) => {
+const createFilter = (query: any, location: any,startDate:any, endDate:any ) => {
 
     const filter: any = {};
 
@@ -571,6 +571,13 @@ const createFilter = (query: any, location: any, ) => {
     }
     if (location) {
         filter.location = { $regex: location, $options: 'i' };
+    }
+    if (startDate && endDate) {
+        // Assuming endDate and startDate are ISO date strings
+        filter.endDate = {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate)
+        };
     }
 
     return filter;

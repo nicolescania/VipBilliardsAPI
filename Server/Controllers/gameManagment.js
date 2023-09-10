@@ -325,8 +325,8 @@ async function getGameListOfCharges1(req, res) {
 }
 async function getGameListOfCharges(req, res) {
     try {
-        const { location } = req.query;
-        const filter = createFilter(location, null);
+        const { query, location, startDate, endDate } = req.query;
+        const filter = createFilter(query, location, startDate, endDate);
         const finalcharge = await fetchGameCharges(filter, 'desc');
         return res.json(finalcharge);
     }
@@ -334,13 +334,19 @@ async function getGameListOfCharges(req, res) {
         res.status(500).json({ message: err });
     }
 }
-const createFilter = (query, location) => {
+const createFilter = (query, location, startDate, endDate) => {
     const filter = {};
     if (query) {
         filter.name = { $regex: query, $options: 'i' };
     }
     if (location) {
         filter.location = { $regex: location, $options: 'i' };
+    }
+    if (startDate && endDate) {
+        filter.endDate = {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate)
+        };
     }
     return filter;
 };
