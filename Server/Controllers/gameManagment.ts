@@ -530,7 +530,36 @@ async function getGameListOfCharges1(req: any, res: any) {
 
 }
 
+const getFormattedDateNow = (date:any) => {
 
+
+    date = new Date(date);
+  
+    // adjust 0 before single digit date
+    let day = ("0" + date.getDate()).slice(-2);
+  
+    // current month
+    let month = ("0" + (date.getMonth() + 1)).slice(-2);
+  
+    // current year
+    let year = date.getFullYear();
+  
+    // current hours
+    let hours = date.getHours();
+  
+    // current minutes
+    let minutes = date.getMinutes();
+  
+    // current seconds
+    let seconds = date.getSeconds();
+  
+    // prints date & time in YYYY-MM-DD HH:MM:SS format
+    return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
+  
+  
+  
+  
+  };
 
 // Función para buscar múltiples registros en la base de datos
 async function getGameListOfCharges(req: any, res:any) {
@@ -544,93 +573,19 @@ async function getGameListOfCharges(req: any, res:any) {
         .exec();
   
 
-      return res.json(charges);
+      // Format the date fields in the charges array
+      const formattedCharges = charges.map((charge) => ({
+        ...charge.toObject(),
+        startDate: getFormattedDateNow(charge.startDate),
+        endDate: getFormattedDateNow(charge.endDate),
+      }));
+  
+      return res.json(formattedCharges);
 
-      // Imprime los registros encontrados
-      console.log('Cargos encontrados:');
-      console.log(charges);
     } catch (error) {
       console.error('Error al buscar cargos:', error);
     }
   }
-
-// GET LIST OF CHARGES
-async function getGameListOfCharges1(req: any, res: any) {
-    console.log('Query:', req.query);
-
-    const {location, startDate, endDate } = req.query;
-    const filter = createFilter(location,startDate,endDate );
-    const finalcharge = await fetchGameCharges(filter, 'desc');
-
-    console.log('Location:', location);
-    console.log('StartDate:', startDate);
-    console.log('EndDate:', endDate);
-
-// Check if finalcharge has a 'locations' property
-
-return res.json(finalcharge);
-    try {
-     
-
-
-    } catch (err) {
-        res.status(500).json({ message: err })
-    }
-
-
-
-  
-
-
-}
-
-
-
-
-
-
-
-
-// charges List being filter
-const createFilter = (location: any,startDate:any, endDate:any ) => {
-
-    const filter: any = {};
-
-
-    if (location) {
-        filter.location = { $regex: location, $options: 'i' };
-    }
-    // if (startDate && endDate) {
-    //     // Assuming endDate and startDate are ISO date strings
-    //     filter.endDate = {
-    //         $gte: new Date(startDate),
-    //         $lte: new Date(endDate)
-    //     };
-    // }
-
-    return filter;
-};
-
-
-//charges list filter asc and desc
-
-const fetchGameCharges = async (filter: any, sort: any) => {
-    let query = chargeDetails.find(filter)
-    .populate('game')
-    .populate('location')
- 
-
-  if (sort === 'desc') {
-        query = query.sort({ startDate: -1 });
-    }
-
-    const chargeslist = await query.exec();
-    return chargeslist;
-};
-
-
-
-
 
 
 // GET GAME charge

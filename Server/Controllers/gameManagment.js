@@ -323,6 +323,16 @@ async function getGameListOfCharges1(req, res) {
         res.status(500).json({ message: err });
     }
 }
+const getFormattedDateNow = (date) => {
+    date = new Date(date);
+    let day = ("0" + date.getDate()).slice(-2);
+    let month = ("0" + (date.getMonth() + 1)).slice(-2);
+    let year = date.getFullYear();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    return (month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds);
+};
 async function getGameListOfCharges(req, res) {
     try {
         const charges = await chargesDetails_1.default.find({ location: req.query.locationId, startDate: { $gte: req.query.startDate },
@@ -330,46 +340,17 @@ async function getGameListOfCharges(req, res) {
             .populate('location')
             .populate('game')
             .exec();
-        return res.json(charges);
-        console.log('Cargos encontrados:');
-        console.log(charges);
+        const formattedCharges = charges.map((charge) => ({
+            ...charge.toObject(),
+            startDate: getFormattedDateNow(charge.startDate),
+            endDate: getFormattedDateNow(charge.endDate),
+        }));
+        return res.json(formattedCharges);
     }
     catch (error) {
         console.error('Error al buscar cargos:', error);
     }
 }
-async function getGameListOfCharges1(req, res) {
-    console.log('Query:', req.query);
-    const { location, startDate, endDate } = req.query;
-    const filter = createFilter(location, startDate, endDate);
-    const finalcharge = await fetchGameCharges(filter, 'desc');
-    console.log('Location:', location);
-    console.log('StartDate:', startDate);
-    console.log('EndDate:', endDate);
-    return res.json(finalcharge);
-    try {
-    }
-    catch (err) {
-        res.status(500).json({ message: err });
-    }
-}
-const createFilter = (location, startDate, endDate) => {
-    const filter = {};
-    if (location) {
-        filter.location = { $regex: location, $options: 'i' };
-    }
-    return filter;
-};
-const fetchGameCharges = async (filter, sort) => {
-    let query = chargesDetails_1.default.find(filter)
-        .populate('game')
-        .populate('location');
-    if (sort === 'desc') {
-        query = query.sort({ startDate: -1 });
-    }
-    const chargeslist = await query.exec();
-    return chargeslist;
-};
 async function getGameCharge(req, res, next) {
     let gameCharge;
     try {
