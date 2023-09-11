@@ -69,6 +69,8 @@ async function userInfo(req, userinfo) {
 }
 async function login(req, res) {
     await user_1.default.findOne({ emailAddress: req.body.emailAddress })
+        .populate('role')
+        .populate('location')
         .then(user => {
         if (user) {
             bcrypt_1.default.compare(req.body.password, user.password, async function (err, result) {
@@ -80,8 +82,8 @@ async function login(req, res) {
                 if (result) {
                     let token = jsonwebtoken_1.default.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress, }, 'VerySecretValue', { expiresIn: '1h' });
                     return res.json({
+                        user,
                         message: 'Login Successful!',
-                        user: await userInfo(req, user),
                         token
                     });
                 }

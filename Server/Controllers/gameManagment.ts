@@ -350,12 +350,14 @@ async function holdGame(req: any, res: any, next: any, ) {
     } 
     
     let dateNow = Date.now()
-    let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: dateNow },  })
     let formattedDateHold = getFormattedDate(dateNow)
     let chargesDetails = await findcharge(holdGame.gameChargeDetails)   
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted) 
     let Holdtime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow)
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
+
+    let holdTimeUpdated = await chargeDetails.updateOne({ _id: holdGame.gameChargeDetails}, { $set: { holdTimeStarted: dateNow,  },  })
+
     let timeStarted = getFormattedDate(chargesDetails?.startDate)
 
 
@@ -452,7 +454,11 @@ async function closeGame(req: any, res: any, next: any,) {
     let time = await getDurationTime(chargesDetails?.startDate, finalDate)
    
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
-    let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: totalAmount, endDate:dateNow, duration: time.minutes },  })
+    const ONTARIOTAXES = 0.13
+    let taxesResults = ONTARIOTAXES * totalAmount
+    let totalAmountAfterTaxes = taxesResults + totalAmount
+   let formattedResult = totalAmountAfterTaxes.toFixed(2)
+    let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: formattedResult, endDate:dateNow, duration: time.minutes },  })
 
     let formattedDate = getFormattedDate(chargesDetails?.startDate)
     let totalAmountFormatted = formatMoney(totalAmount)
@@ -463,7 +469,8 @@ async function closeGame(req: any, res: any, next: any,) {
        totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
         message: 'game closed',
         totalAmountFormatted,
-        finalDate
+        finalDate,
+     
     })
 
   

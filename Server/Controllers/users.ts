@@ -132,7 +132,9 @@ async function login(req: any, res: any) {
 
          
   
-        await Users.findOne({ emailAddress: req.body.emailAddress })  
+        await Users.findOne({ emailAddress: req.body.emailAddress })
+        .populate('role')
+        .populate('location')  
         .then(user => {
 
             if (user) {
@@ -147,10 +149,11 @@ async function login(req: any, res: any) {
                         let token = jwt.sign({ name: user.firstName, lastName: user.lastName, email: user.emailAddress,  }, 'VerySecretValue', { expiresIn: '1h' })
 
                         return res.json({
-                            //user
+                            user,
                              message: 'Login Successful!',
-                             user: await userInfo(req, user),
                              token
+                            // user: await userInfo(req, user),
+                           
 
                         })
 

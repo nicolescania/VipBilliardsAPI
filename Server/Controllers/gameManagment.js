@@ -201,12 +201,12 @@ async function holdGame(req, res, next) {
         return res.status(500).json({ message: err });
     }
     let dateNow = Date.now();
-    let holdTimeUpdated = await chargesDetails_1.default.updateOne({ _id: holdGame.gameChargeDetails }, { $set: { holdTimeStarted: dateNow }, });
     let formattedDateHold = getFormattedDate(dateNow);
     let chargesDetails = await findcharge(holdGame.gameChargeDetails);
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted);
     let Holdtime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
+    let holdTimeUpdated = await chargesDetails_1.default.updateOne({ _id: holdGame.gameChargeDetails }, { $set: { holdTimeStarted: dateNow, }, });
     let timeStarted = getFormattedDate(chargesDetails?.startDate);
     return res.json({
         timeStarted: timeStarted,
@@ -272,7 +272,11 @@ async function closeGame(req, res, next) {
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
-    let amountUpdated = await chargesDetails_1.default.updateOne({ _id: deleteGame.gameChargeDetails }, { $set: { amount: totalAmount, endDate: dateNow, duration: time.minutes }, });
+    const ONTARIOTAXES = 0.13;
+    let taxesResults = ONTARIOTAXES * totalAmount;
+    let totalAmountAfterTaxes = taxesResults + totalAmount;
+    let formattedResult = totalAmountAfterTaxes.toFixed(2);
+    let amountUpdated = await chargesDetails_1.default.updateOne({ _id: deleteGame.gameChargeDetails }, { $set: { amount: formattedResult, endDate: dateNow, duration: time.minutes }, });
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
     let totalAmountFormatted = formatMoney(totalAmount);
     let closeGame = await activeGame_1.default.findOneAndDelete({ game: gameInfo });
@@ -280,7 +284,7 @@ async function closeGame(req, res, next) {
         totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,
         message: 'game closed',
         totalAmountFormatted,
-        finalDate
+        finalDate,
     });
 }
 async function setFreeGame(req, res, next) {
