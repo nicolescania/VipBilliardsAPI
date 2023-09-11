@@ -6,6 +6,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface IBranches extends Document {
     name: string;
+    layout:String
    
   }
   
@@ -15,9 +16,8 @@ interface IBranches extends Document {
 const brancheSchema: Schema<IBranches> = new Schema
 ({
 
-        name: {
-        type: String,
-        require: true   }
+        name: { type: String, require: true   },
+        layout: {type:String}
   
 })
 

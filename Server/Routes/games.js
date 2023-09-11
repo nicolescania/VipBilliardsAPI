@@ -18,6 +18,10 @@ router.get('/api/game-types/:id', gameController.getGameType, (req, res) => {
 router.get('/api/game/:id', gameController.getGame, (req, res) => {
     res.json(res.game);
 });
+router.get('/api/game/branch/:id', gameController.getLocation, (req, res) => {
+    res.json(res.branch);
+});
+router.patch('/api/game/branch/update/:id', gameController.getLocation, gameController.updateLocation);
 router.patch('/api/game-types/update/:id', gameController.getGameType, gameController.updateGameType);
 router.patch('/api/game/update/:id', gameController.getGame, gameController.updateGame);
 router.delete('/api/game-types/:id', gameController.getGameType, gameController.deleteGameType);

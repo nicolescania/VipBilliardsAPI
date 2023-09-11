@@ -25,10 +25,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const brancheSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        require: true
-    }
+    name: { type: String, require: true },
+    layout: { type: String }
 });
 const Model = mongoose_1.default.model("branches", brancheSchema);
 exports.default = Model;

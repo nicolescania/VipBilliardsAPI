@@ -44,6 +44,14 @@ router.get('/api/game/:id', gameController.getGame, (req: any, res: any) => {
 
 })
 
+//MILDWARE LOCATION 
+router.get('/api/game/branch/:id', gameController.getLocation, (req: any, res: any) => {
+    res.json(res.branch)
+
+})
+
+//UPDATE LOCATION
+router.patch('/api/game/branch/update/:id', gameController.getLocation, gameController.updateLocation)
 //UPDATE GAME TYPE
 router.patch('/api/game-types/update/:id', gameController.getGameType, gameController.updateGameType)
 

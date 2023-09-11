@@ -127,6 +127,33 @@ async function getGame(req, res, next) {
     res.game = game;
     next();
 }
+async function getLocation(req, res, next) {
+    let branch;
+    try {
+        branch = await branch_1.default.findById(req.params.id);
+        if (branch == null) {
+            return res.status(404).json({ message: 'Can not find branch' });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    res.branch = branch;
+    next();
+}
+async function updateLocation(req, res) {
+    if (req.body.name != null) {
+        res.branch.name = req.body.name;
+        res.branch.layout = req.body.layout;
+        try {
+            const updateBranch = await res.branch.save();
+            res.json(updateBranch);
+        }
+        catch (error) {
+            res.status(400).json({ message: error });
+        }
+    }
+}
 async function updateGameType(req, res) {
     if (req.body.name != null) {
         res.gameType.name = req.body.name;
@@ -252,5 +279,5 @@ async function ProcessDeletePage(req, res, next) {
     }
 }
 exports.ProcessDeletePage = ProcessDeletePage;
-module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage, ProcessEditPage, getBranchesList };
+module.exports = { getGameTypeList, createGameType, getGameType, updateGameType, deleteGameType, getGameList, createGame, getGame, updateGame, deleteGame, gameInfo, findGame, findGameType, DisplayGameListPage, createLocation, findLocation, DisplayEditPage, ProcessDeletePage, ProcessAddPage, DisplayAddPage, ProcessEditPage, getBranchesList, getLocation, updateLocation };
 //# sourceMappingURL=games.js.map
