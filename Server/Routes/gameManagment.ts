@@ -46,10 +46,13 @@ router.get('/api/game-active/', gameManagmentController.getActivegame, (req: any
 
 })
 
-//DELETE GAME TYPE
+//CLOSE GAME
 router.delete('/api/game/close-game', gameManagmentController.closeGame)
-//DELETE GAME TYPE
+//CLOSE GAME FOR FREE
 router.delete('/api/game/free-game', gameManagmentController.setFreeGame)
+
+//DELETE CHARGE
+router.delete('/api/game/delete-charge/:id', gameManagmentController.deleteChargeById)
 
 
 

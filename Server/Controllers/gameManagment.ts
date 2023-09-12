@@ -5,6 +5,7 @@ import activeGame from '../Models/activeGame'
 import gameTypes from '../Models/gameTypes'
 import games from '../Models/game'
 import { json } from "stream/consumers";
+import { param } from "jquery";
 
 const gameController = require('../Controllers/games')
 
@@ -476,7 +477,21 @@ async function closeGame(req: any, res: any, next: any,) {
   
 }
 
+async function deleteChargeById(req: any, res:any){
+    {
+        try {
+            const id = req.params.id;
+            
+            await chargeDetails.findByIdAndDelete({ _id: id });
+            res.json('charge deleted');
+             
+        } catch (error) {
+            res.status(500).json({ message: error })
 
+        }
+    }
+    
+}
 
 // FREE GAME 
 
@@ -525,17 +540,6 @@ async function setFreeGame(req: any, res: any, next: any,) {
 }
 
 
-// GET LIST OF CHARGES
-async function getGameListOfCharges1(req: any, res: any) {
-
-    try {
-        const finalcharge = await chargeDetails.find()
-        res.json(finalcharge)
-    } catch (err) {
-        res.status(500).json({ message: err })
-    }
-
-}
 
 const getFormattedDateNow = (date:any) => {
 
@@ -689,4 +693,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame,startGameByMinute };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame,startGameByMinute ,deleteChargeById};

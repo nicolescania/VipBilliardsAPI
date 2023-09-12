@@ -287,6 +287,18 @@ async function closeGame(req, res, next) {
         finalDate,
     });
 }
+async function deleteChargeById(req, res) {
+    {
+        try {
+            const id = req.params.id;
+            await chargesDetails_1.default.findByIdAndDelete({ _id: id });
+            res.json('charge deleted');
+        }
+        catch (error) {
+            res.status(500).json({ message: error });
+        }
+    }
+}
 async function setFreeGame(req, res, next) {
     let freeGame;
     let gameInfo = await gameController.findGame(req.body.gameId);
@@ -317,15 +329,6 @@ async function setFreeGame(req, res, next) {
         finalDate,
         amount: freeamount?.amount
     });
-}
-async function getGameListOfCharges1(req, res) {
-    try {
-        const finalcharge = await chargesDetails_1.default.find();
-        res.json(finalcharge);
-    }
-    catch (err) {
-        res.status(500).json({ message: err });
-    }
 }
 const getFormattedDateNow = (date) => {
     date = new Date(date);
@@ -403,5 +406,5 @@ async function transferGame(req, res, next) {
     }
     return res.json({ message: 'Game transfered successfully' });
 }
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame, startGameByMinute };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame, startGameByMinute, deleteChargeById };
 //# sourceMappingURL=gameManagment.js.map
