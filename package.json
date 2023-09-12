@@ -1,10 +1,13 @@
 {
-  "name": "VipBilliards",
+  "name": "vipbilliards",
   "version": "0.0.3",
   "description": "Demo project of a billiard app",
   "main": "server.js",
   "author": "Nicole Peralta",
   "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
 
   "engines": {
     "node": "14.20.1"
