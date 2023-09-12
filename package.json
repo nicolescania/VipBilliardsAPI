@@ -6,7 +6,7 @@
   "author": "Nicole Peralta",
   "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "start": "node Server.js"
   },
   "engines": {
     "node": "14.20.1"
