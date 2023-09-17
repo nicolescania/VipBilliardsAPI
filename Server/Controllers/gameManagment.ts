@@ -204,12 +204,15 @@ async function getDurationTime(startDate: any, endDate: any,) {
     const differenceInHours = Math.floor(differenceInMinutes / 60);
    
 
+    const remainingMinutes = differenceInMinutes - (differenceInHours * 60);
 
 
     const durationTime = {
-        hours: differenceInHours,
-        minutes:differenceInMinutes,
+
+        hours: differenceInHours + Math.floor(remainingMinutes / 60),
+        minutes: remainingMinutes % 60,
         differenceInMilliseconds
+    
                     
     }
 
@@ -374,9 +377,11 @@ async function holdGame(req: any, res: any, next: any, ) {
 
 async function test(req:any, res:any)
 {
-      var aMinuteAgo = new Date( Date.now() - 5 )
+    // const startDate = new Date("2023-09-17T08:00:00");
+    // const endDate = new Date("2023-09-17T10:30:00");
+    // const duration = await getDurationTime(startDate, endDate);
 
-      return res.json(getFormattedDate(aMinuteAgo))
+    // return res.json(duration)
 }
 
 
@@ -693,4 +698,4 @@ async function transferGame(req: any, res: any, next: any) {
 
 
 
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame,startGameByMinute ,deleteChargeById};
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame,getGameListOfCharges, holdGame,resumeGame, test, setFreeGame,startGameByMinute ,deleteChargeById, getDurationTime};

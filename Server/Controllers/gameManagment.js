@@ -110,9 +110,10 @@ async function getDurationTime(startDate, endDate) {
     const differenceInMilliseconds = endDate - startDate;
     const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
     const differenceInHours = Math.floor(differenceInMinutes / 60);
+    const remainingMinutes = differenceInMinutes - (differenceInHours * 60);
     const durationTime = {
-        hours: differenceInHours,
-        minutes: differenceInMinutes,
+        hours: differenceInHours + Math.floor(remainingMinutes / 60),
+        minutes: remainingMinutes % 60,
         differenceInMilliseconds
     };
     return durationTime;
@@ -216,8 +217,6 @@ async function holdGame(req, res, next) {
     });
 }
 async function test(req, res) {
-    var aMinuteAgo = new Date(Date.now() - 5);
-    return res.json(getFormattedDate(aMinuteAgo));
 }
 async function getValidationTime(chargesDetailsHoldTime, chargesDetailStartDated, endDate, chargesDetailsHoldTimeStarted) {
     if (chargesDetailsHoldTime == 0) {
@@ -406,5 +405,5 @@ async function transferGame(req, res, next) {
     }
     return res.json({ message: 'Game transfered successfully' });
 }
-module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame, startGameByMinute, deleteChargeById };
+module.exports = { startGame, getGameActive, getGameCharge, closeGame, getActivegame, transferGame, getGameListOfCharges, holdGame, resumeGame, test, setFreeGame, startGameByMinute, deleteChargeById, getDurationTime };
 //# sourceMappingURL=gameManagment.js.map
