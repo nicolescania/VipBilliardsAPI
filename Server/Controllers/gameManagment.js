@@ -110,10 +110,9 @@ async function getDurationTime(startDate, endDate) {
     const differenceInMilliseconds = endDate - startDate;
     const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
     const differenceInHours = Math.floor(differenceInMinutes / 60);
-    const remainingMinutes = differenceInMinutes - (differenceInHours * 60);
     const durationTime = {
-        hours: differenceInHours + Math.floor(remainingMinutes / 60),
-        minutes: remainingMinutes % 60,
+        hours: differenceInHours,
+        minutes: differenceInMinutes,
         differenceInMilliseconds
     };
     return durationTime;
@@ -143,6 +142,14 @@ async function gameActive(chargesDetailsId, gameId, status) {
         return ({ message: err });
     }
 }
+function getRemainingMinutes(minutes, hours) {
+    const remainingMinutes = minutes - (hours * 60);
+    const durationTime = {
+        hours: hours + Math.floor(remainingMinutes / 60),
+        minutes: remainingMinutes % 60,
+    };
+    return durationTime;
+}
 async function getGameActive(req, res, next) {
     let gameactive;
     let gameInfo = await gameController.findGame(req.body.gameId);
@@ -167,16 +174,18 @@ async function getGameActive(req, res, next) {
     let totalAmountFormatted = formatMoney(totalAmount);
     let holdTimeStarted = getFormattedDate(chargesDetails?.holdTimeStarted);
     let holdTime = await getDurationTime(chargesDetails?.holdTimeStarted, endDate);
+    let remainingTime = getRemainingMinutes(time.minutes, time.hours);
+    let remainingHoldTime = getRemainingMinutes(holdTime.minutes, holdTime.hours);
     return res.json({
         gameActiveExist: true,
         game: gameInfo.name,
         type: gameTypesDetails.name,
         gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}`,
-        timePlaying: `${time.hours} hours, ${time.minutes} minutes`,
+        timePlaying: `${remainingTime.hours} hours, ${remainingTime.minutes} minutes`,
         charge: totalAmountFormatted,
         gameStatus: gameactive?.isActive,
         holdTimeStarted,
-        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`,
+        holdTime: `${remainingHoldTime.hours} hours, ${remainingHoldTime.minutes} minutes`,
     });
 }
 async function verifyMinimumChargeRequired(minimum) {

@@ -204,13 +204,12 @@ async function getDurationTime(startDate: any, endDate: any,) {
     const differenceInHours = Math.floor(differenceInMinutes / 60);
    
 
-    const remainingMinutes = differenceInMinutes - (differenceInHours * 60);
 
 
     const durationTime = {
 
-        hours: differenceInHours + Math.floor(remainingMinutes / 60),
-        minutes: remainingMinutes % 60,
+        hours: differenceInHours, 
+        minutes: differenceInMinutes, 
         differenceInMilliseconds
     
                     
@@ -268,6 +267,23 @@ async function gameActive(chargesDetailsId: any, gameId: any, status:any) {
 }
 
 
+
+// CALCULATE REMAINING MINUTES
+
+function getRemainingMinutes(minutes: any, hours: any)
+{
+    const remainingMinutes = minutes - (hours * 60);
+
+    const durationTime = {
+
+        hours: hours + Math.floor(remainingMinutes / 60),
+        minutes: remainingMinutes % 60,    
+                    
+    }
+
+    return durationTime
+}
+
 // GET GAME ACTIVE
 async function getGameActive(req: any, res: any, next: any) {
 
@@ -305,17 +321,21 @@ async function getGameActive(req: any, res: any, next: any) {
     let totalAmountFormatted = formatMoney(totalAmount)
     let holdTimeStarted = getFormattedDate(chargesDetails?.holdTimeStarted)
     let holdTime = await getDurationTime(chargesDetails?.holdTimeStarted, endDate)
+    let remainingTime = getRemainingMinutes(time.minutes, time.hours)
+    let remainingHoldTime = getRemainingMinutes(holdTime.minutes, holdTime.hours)
+    
+
 
     return res.json({
         gameActiveExist: true,
         game: gameInfo.name,
         type: gameTypesDetails.name,
         gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}` , 
-        timePlaying: `${time.hours} hours, ${time.minutes} minutes`,
+        timePlaying: `${remainingTime.hours} hours, ${remainingTime.minutes} minutes`,
         charge: totalAmountFormatted,
         gameStatus: gameactive?.isActive,
         holdTimeStarted,
-        holdTime: `${holdTime.hours} hours, ${holdTime.minutes} minutes`,
+        holdTime: `${remainingHoldTime.hours} hours, ${remainingHoldTime.minutes} minutes`,
         
 
 
