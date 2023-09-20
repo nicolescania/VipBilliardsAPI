@@ -50,6 +50,13 @@ const getFormattedDate = (date) => {
     };
     return formattedDate;
 };
+function zoneTimeChanged() {
+    const torontoTimezone = 'America/Toronto';
+    const now = new Date();
+    const options = { timeZone: torontoTimezone };
+    const torontoDate = new Date(now.toLocaleString('en-US', options));
+    return torontoDate;
+}
 async function startGame(req, res) {
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
@@ -57,7 +64,7 @@ async function startGame(req, res) {
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
-        startDate: Date.now(),
+        startDate: zoneTimeChanged(),
         holdTime: 0,
         minimunChargeCondition: true,
         location: gameInfo.location
@@ -85,7 +92,7 @@ async function startGameByMinute(req, res) {
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
-        startDate: Date.now(),
+        startDate: zoneTimeChanged(),
         holdTime: 0,
         minimunChargeCondition: false,
         location: gameInfo.location
@@ -167,7 +174,7 @@ async function getGameActive(req, res, next) {
         return res.status(500).json({ message: err });
     }
     let chargesDetails = await findcharge(gameactive.gameChargeDetails);
-    let endDate = Date.now();
+    let endDate = zoneTimeChanged();
     let time = await getValidationTime(chargesDetails?.holdTime, chargesDetails?.startDate, endDate, chargesDetails?.holdTimeStarted);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
     let formattedDate = getFormattedDate(chargesDetails?.startDate);
@@ -210,7 +217,7 @@ async function holdGame(req, res, next) {
     catch (err) {
         return res.status(500).json({ message: err });
     }
-    let dateNow = Date.now();
+    let dateNow = zoneTimeChanged();
     let formattedDateHold = getFormattedDate(dateNow);
     let chargesDetails = await findcharge(holdGame.gameChargeDetails);
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted);
@@ -253,7 +260,7 @@ async function resumeGame(req, res, next) {
         return res.status(500).json({ message: err });
     }
     let chargesDetails = await findcharge(resumeGame.gameChargeDetails);
-    let dateNow = Date.now();
+    let dateNow = zoneTimeChanged();
     let holdGameTime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow);
     let holdTimeUpdated = await chargesDetails_1.default.updateOne({ _id: resumeGame.gameChargeDetails }, { $set: { holdTime: holdGameTime.minutes, holdTimeStarted: null }, });
     return res.json({
@@ -276,7 +283,7 @@ async function closeGame(req, res, next) {
         return res.status(500).json({ message: err });
     }
     let chargesDetails = await findcharge(deleteGame.gameChargeDetails);
-    let dateNow = Date.now();
+    let dateNow = zoneTimeChanged();
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);
@@ -323,7 +330,7 @@ async function setFreeGame(req, res, next) {
         return res.status(500).json({ message: err });
     }
     let chargesDetails = await findcharge(freeGame.gameChargeDetails);
-    let dateNow = Date.now();
+    let dateNow = zoneTimeChanged();
     let finalDate = new Date(dateNow - chargesDetails?.holdTime * 60000);
     let time = await getDurationTime(chargesDetails?.startDate, finalDate);
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes, chargesDetails?.minimunChargeCondition);

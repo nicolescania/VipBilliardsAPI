@@ -7,6 +7,12 @@ import games from '../Models/game'
 import { json } from "stream/consumers";
 import { param } from "jquery";
 
+import moment from 'moment-timezone';
+
+
+
+
+
 const gameController = require('../Controllers/games')
 
 
@@ -93,6 +99,18 @@ const getFormattedDate = (date: any) => {
     return formattedDate;
 };
 
+function zoneTimeChanged() {
+
+    const torontoTimezone = 'America/Toronto';
+
+    // Get the current date and time in the 'America/Toronto' time zone
+    const now = new Date();
+    const options = { timeZone: torontoTimezone };
+    const torontoDate = new Date(now.toLocaleString('en-US', options));
+  
+    return torontoDate;
+
+}
 
 // START GAME
 async function startGame(req: any, res: any) {
@@ -105,6 +123,7 @@ async function startGame(req: any, res: any) {
     let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60,true)
 
 
+
     const startgame = new chargeDetails({
 
         // Game Info
@@ -114,7 +133,9 @@ async function startGame(req: any, res: any) {
         amount: totalAmount,
 
         // Time that game started
-        startDate: Date.now(),
+        startDate: zoneTimeChanged(), // Convert moment object to Date
+
+        //startDate:  Date.now(),
 
         holdTime: 0,
         
@@ -164,7 +185,7 @@ async function startGameByMinute(req: any, res: any) {
         amount: totalAmount,
 
         // Time that game started
-        startDate: Date.now(),
+        startDate: zoneTimeChanged(),
 
         holdTime: 0  ,
         
@@ -312,7 +333,7 @@ async function getGameActive(req: any, res: any, next: any) {
 
     }
     let chargesDetails = await findcharge(gameactive.gameChargeDetails)
-    let endDate = Date.now()
+    let endDate = zoneTimeChanged()
 
     let time = await getValidationTime(chargesDetails?.holdTime,chargesDetails?.startDate, endDate, chargesDetails?.holdTimeStarted)
 
@@ -373,7 +394,7 @@ async function holdGame(req: any, res: any, next: any, ) {
         return res.status(500).json({ message: err })
     } 
     
-    let dateNow = Date.now()
+    let dateNow = zoneTimeChanged()
     let formattedDateHold = getFormattedDate(dateNow)
     let chargesDetails = await findcharge(holdGame.gameChargeDetails)   
     let time = await getDurationTime(chargesDetails?.startDate, chargesDetails?.holdTimeStarted) 
@@ -440,7 +461,7 @@ async function resumeGame(req: any, res: any, next: any, ) {
     }
 
     let chargesDetails = await findcharge(resumeGame.gameChargeDetails)    
-    let dateNow = Date.now() 
+    let dateNow = zoneTimeChanged()
     let holdGameTime = await getDurationTime(chargesDetails?.holdTimeStarted, dateNow)    
     let holdTimeUpdated = await chargeDetails.updateOne({ _id: resumeGame.gameChargeDetails}, { $set: { holdTime: holdGameTime.minutes, holdTimeStarted: null },  })
 
@@ -474,7 +495,7 @@ async function closeGame(req: any, res: any, next: any,) {
         return res.status(500).json({ message: err })
     }
     let chargesDetails = await findcharge(deleteGame.gameChargeDetails)
-    let dateNow = Date.now()
+    let dateNow = zoneTimeChanged()
     let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
     
     let time = await getDurationTime(chargesDetails?.startDate, finalDate)
@@ -540,7 +561,7 @@ async function setFreeGame(req: any, res: any, next: any,) {
         return res.status(500).json({ message: err })
     }
     let chargesDetails = await findcharge(freeGame.gameChargeDetails)
-    let dateNow = Date.now()
+    let dateNow = zoneTimeChanged()
     let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
     
     let time = await getDurationTime(chargesDetails?.startDate, finalDate)
