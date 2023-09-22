@@ -306,7 +306,7 @@ function getRemainingMinutes(minutes: any, hours: any)
 }
 
 // GET GAME ACTIVE
-async function getGameActive(req: any, res: any, next: any) {
+async function getGameActive1(req: any, res: any, next: any) {
 
     let gameactive
 
@@ -366,6 +366,78 @@ async function getGameActive(req: any, res: any, next: any) {
 
 }
 
+
+// GET GAME ACTIVE
+async function getGameActive(req: any, res: any, next: any) {
+  let gameactive
+
+    try {
+
+        gameactive = await activeGame.findOne({ game: req.body.gameId }) 
+        .populate('gameChargeDetails')
+        .populate({
+            path: 'game',
+            populate: [
+              { path: 'gameType' },
+              { path: 'location' }
+            ]
+          })
+        .exec();
+
+        if (gameactive == null) {
+
+            return res.status(200).json({
+                gameActiveExist: false,
+                message: 'Can not find game',
+            }
+            )
+        }
+
+    } catch (err) {
+
+        return res.status(500).json({ message: err })
+
+    }
+
+     let endDate = zoneTimeChanged()
+     let time = await getValidationTime(gameactive.gameChargeDetails.holdTime,gameactive.gameChargeDetails.startDate, endDate, gameactive.gameChargeDetails.holdTimeStarted)   
+     let totalAmount = getAmount(gameactive.game.gameType.pricePerHour, gameactive.game.gameType.pricePerMinute, time.minutes,gameactive.gameChargeDetails.minimunChargeCondition)   
+     let formattedDate = getFormattedDate(gameactive.gameChargeDetails.startDate)
+     let totalAmountFormatted = formatMoney(totalAmount)
+     let remainingTime = getRemainingMinutes(time.minutes, time.hours)
+
+//    if (gameactive.isActive == false) {
+    let holdTimeStarted = getFormattedDate(gameactive.gameChargeDetails.holdTimeStarted)
+    let holdTime = await getDurationTime(gameactive.gameChargeDetails.holdTimeStarted, endDate)  
+   let remainingHoldTime = getRemainingMinutes(holdTime.minutes, holdTime.hours)
+
+    //  return res.json({
+    //     // holdTimeStarted,
+    //     //holdTime: `${remainingHoldTime.hours} hours, ${remainingHoldTime.minutes} minutes`,
+    //  })
+//    }
+  
+
+
+    
+    //return res.json(gameactive)
+
+    return res.json({
+        gameActiveExist: true,
+        game: gameactive.game.name,
+        type: gameactive.game.gameType.name,
+        gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}` , 
+        timePlaying: `${remainingTime.hours} hours, ${remainingTime.minutes} minutes`,
+        charge: totalAmountFormatted,
+        gameStatus: gameactive?.isActive,
+      
+        holdTimeStarted,
+        holdTime: `${remainingHoldTime.hours} hours, ${remainingHoldTime.minutes} minutes`,
+        
+
+    })
+
+}
 
 
 async function verifyMinimumChargeRequired(minimum:Boolean){

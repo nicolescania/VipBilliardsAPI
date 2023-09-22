@@ -157,7 +157,7 @@ function getRemainingMinutes(minutes, hours) {
     };
     return durationTime;
 }
-async function getGameActive(req, res, next) {
+async function getGameActive1(req, res, next) {
     let gameactive;
     let gameInfo = await gameController.findGame(req.body.gameId);
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
@@ -187,6 +187,50 @@ async function getGameActive(req, res, next) {
         gameActiveExist: true,
         game: gameInfo.name,
         type: gameTypesDetails.name,
+        gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}`,
+        timePlaying: `${remainingTime.hours} hours, ${remainingTime.minutes} minutes`,
+        charge: totalAmountFormatted,
+        gameStatus: gameactive?.isActive,
+        holdTimeStarted,
+        holdTime: `${remainingHoldTime.hours} hours, ${remainingHoldTime.minutes} minutes`,
+    });
+}
+async function getGameActive(req, res, next) {
+    let gameactive;
+    try {
+        gameactive = await activeGame_1.default.findOne({ game: req.body.gameId })
+            .populate('gameChargeDetails')
+            .populate({
+            path: 'game',
+            populate: [
+                { path: 'gameType' },
+                { path: 'location' }
+            ]
+        })
+            .exec();
+        if (gameactive == null) {
+            return res.status(200).json({
+                gameActiveExist: false,
+                message: 'Can not find game',
+            });
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err });
+    }
+    let endDate = zoneTimeChanged();
+    let time = await getValidationTime(gameactive.gameChargeDetails.holdTime, gameactive.gameChargeDetails.startDate, endDate, gameactive.gameChargeDetails.holdTimeStarted);
+    let totalAmount = getAmount(gameactive.game.gameType.pricePerHour, gameactive.game.gameType.pricePerMinute, time.minutes, gameactive.gameChargeDetails.minimunChargeCondition);
+    let formattedDate = getFormattedDate(gameactive.gameChargeDetails.startDate);
+    let totalAmountFormatted = formatMoney(totalAmount);
+    let remainingTime = getRemainingMinutes(time.minutes, time.hours);
+    let holdTimeStarted = getFormattedDate(gameactive.gameChargeDetails.holdTimeStarted);
+    let holdTime = await getDurationTime(gameactive.gameChargeDetails.holdTimeStarted, endDate);
+    let remainingHoldTime = getRemainingMinutes(holdTime.minutes, holdTime.hours);
+    return res.json({
+        gameActiveExist: true,
+        game: gameactive.game.name,
+        type: gameactive.game.gameType.name,
         gameStarted: ` ${formattedDate.month} ${formattedDate.day} - ${formattedDate.hours}:${formattedDate.minutes}${formattedDate.ampm}`,
         timePlaying: `${remainingTime.hours} hours, ${remainingTime.minutes} minutes`,
         charge: totalAmountFormatted,
