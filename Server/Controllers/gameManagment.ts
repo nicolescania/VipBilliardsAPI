@@ -518,6 +518,8 @@ async function test(req:any, res:any)
 async function resumeGame(req: any, res: any, next: any, ) {
     let resumeGame
     let gameInfo = await gameController.findGame(req.body.gameId)
+
+
     let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
 
     try {
@@ -553,12 +555,19 @@ async function resumeGame(req: any, res: any, next: any, ) {
 
 async function closeGame(req: any, res: any, next: any,) {
     let deleteGame
-   let gameInfo = await gameController.findGame(req.body.gameId)
-   let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
-
     try {
 
-         deleteGame = await activeGame.findOne({ game: gameInfo })
+        deleteGame = await activeGame.findOne({ game: req.body.gameId }) 
+        .populate('gameChargeDetails')
+        .populate({
+            path: 'game',
+            populate: [
+              { path: 'gameType' },
+              { path: 'location' }
+            ]
+          })
+        .exec();
+
          if (deleteGame == null) {
 
             return res.status(404).json({
@@ -569,23 +578,23 @@ async function closeGame(req: any, res: any, next: any,) {
     } catch (err) {
         return res.status(500).json({ message: err })
     }
-    let chargesDetails = await findcharge(deleteGame.gameChargeDetails)
+
     let dateNow = zoneTimeChanged()
-    let finalDate =   new Date( dateNow - chargesDetails?.holdTime * 60000 )
-    
-    let time = await getDurationTime(chargesDetails?.startDate, finalDate)
+    let finalDate =   new Date( dateNow - deleteGame.gameChargeDetails.holdTime * 60000 )
+    let time = await getDurationTime(deleteGame.gameChargeDetails.startDate, finalDate)
    
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, time.minutes,chargesDetails?.minimunChargeCondition)
+    let totalAmount = getAmount(deleteGame.game.gameType.pricePerHour, deleteGame.game.gameType.pricePerMinute, time.minutes,deleteGame.gameChargeDetails.minimunChargeCondition)
     const ONTARIOTAXES = 0.13
     let taxesResults = ONTARIOTAXES * totalAmount
     let totalAmountAfterTaxes = taxesResults + totalAmount
    let formattedResult = totalAmountAfterTaxes.toFixed(2)
     let amountUpdated = await chargeDetails.updateOne({ _id: deleteGame.gameChargeDetails}, { $set: { amount: formattedResult, endDate:dateNow, duration: time.minutes },  })
 
-    let formattedDate = getFormattedDate(chargesDetails?.startDate)
+    let formattedDate = getFormattedDate(deleteGame.gameChargeDetails.startDate)
     let totalAmountFormatted = formatMoney(totalAmount)
+   
+   let closeGame = await activeGame.findOneAndDelete({game: deleteGame.game})
 
-   let closeGame = await activeGame.findOneAndDelete({game:gameInfo})
     return res.json({
     
        totalTimePlayed: `You have been playing for ${time.minutes} minutes and ${time.hours} hours`,   
