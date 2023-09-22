@@ -128,7 +128,7 @@ async function startGame(req: any, res: any) {
     const startgame = new chargeDetails({
 
         // Game Info
-        game: gameInfo,
+        game: gameInfo?._id,
 
         // total Amount
         amount: totalAmount,
@@ -136,13 +136,11 @@ async function startGame(req: any, res: any) {
         // Time that game started
         startDate: zoneTimeChanged(), // Convert moment object to Date
 
-        //startDate:  Date.now(),
-
         holdTime: 0,
         
         minimunChargeCondition: true,
 
-        location: gameInfo.location
+        location: gameInfo?.location._id
     })
 
     try {
@@ -153,7 +151,7 @@ async function startGame(req: any, res: any) {
         let formattedDate = getFormattedDate(newstartgame.startDate)
         return res.json({
             Game: gameInfo.name,
-            GameType: gameTypesDetails.name,
+            GameType: gameInfo.gameType.name,
             Date: formattedDate,
             totalAmount: totalAmount,
 
@@ -183,7 +181,8 @@ async function startGameByMinute(req: any, res: any) {
     const startgame = new chargeDetails({
 
         // Game Info
-        game: gameInfo,
+        game: gameInfo?._id,
+
 
         // total Amount
         amount: totalAmount,
@@ -195,7 +194,7 @@ async function startGameByMinute(req: any, res: any) {
         
         minimunChargeCondition: false,
 
-        location: gameInfo.location
+        location: gameInfo?.location._id
 
     })
 
@@ -207,7 +206,7 @@ async function startGameByMinute(req: any, res: any) {
         let formattedDate = getFormattedDate(newstartgame.startDate)
         return res.json({
             Game: gameInfo.name,
-            GameType: gameTypesDetails.name,
+            GameType: gameInfo.gameType.name,
             Date: formattedDate,
             totalAmount: totalAmount,
 

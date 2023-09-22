@@ -65,12 +65,12 @@ async function startGame(req, res) {
         .exec();
     let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60, true);
     const startgame = new chargesDetails_1.default({
-        game: gameInfo,
+        game: gameInfo?._id,
         amount: totalAmount,
         startDate: zoneTimeChanged(),
         holdTime: 0,
         minimunChargeCondition: true,
-        location: gameInfo.location
+        location: gameInfo?.location._id
     });
     try {
         const newstartgame = await startgame.save();
@@ -79,7 +79,7 @@ async function startGame(req, res) {
         let formattedDate = getFormattedDate(newstartgame.startDate);
         return res.json({
             Game: gameInfo.name,
-            GameType: gameTypesDetails.name,
+            GameType: gameInfo.gameType.name,
             Date: formattedDate,
             totalAmount: totalAmount,
         });
@@ -95,12 +95,12 @@ async function startGameByMinute(req, res) {
         .exec();
     let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60, false);
     const startgame = new chargesDetails_1.default({
-        game: gameInfo,
+        game: gameInfo?._id,
         amount: totalAmount,
         startDate: zoneTimeChanged(),
         holdTime: 0,
         minimunChargeCondition: false,
-        location: gameInfo.location
+        location: gameInfo?.location._id
     });
     try {
         const newstartgame = await startgame.save();
@@ -109,7 +109,7 @@ async function startGameByMinute(req, res) {
         let formattedDate = getFormattedDate(newstartgame.startDate);
         return res.json({
             Game: gameInfo.name,
-            GameType: gameTypesDetails.name,
+            GameType: gameInfo.gameType.name,
             Date: formattedDate,
             totalAmount: totalAmount,
         });
