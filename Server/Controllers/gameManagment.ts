@@ -786,9 +786,8 @@ async function getActivegame(req: any, res: any, next: any) {
 
 async function transferGame(req: any, res: any, next: any) {
 
-
-    let gameInfo01 = await gameController.findGame(req.body.gameId01)
-    let gameInfo02 = await gameController.findGame(req.body.gameId02)
+    let gameInfo01 =  await games.findOne({_id: req.body.gameId01 }) 
+    let gameInfo02 = await games.findOne({_id: req.body.gameId02 }) 
 
     try {
 

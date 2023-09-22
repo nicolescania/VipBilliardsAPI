@@ -455,8 +455,8 @@ async function getActivegame(req, res, next) {
     next();
 }
 async function transferGame(req, res, next) {
-    let gameInfo01 = await gameController.findGame(req.body.gameId01);
-    let gameInfo02 = await gameController.findGame(req.body.gameId02);
+    let gameInfo01 = await game_1.default.findOne({ _id: req.body.gameId01 });
+    let gameInfo02 = await game_1.default.findOne({ _id: req.body.gameId02 });
     try {
         let gameupdated = await activeGame_1.default.updateOne({ game: gameInfo01 }, { $set: { game: gameInfo02, isActive: true } });
         if (gameupdated == null) {
