@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const chargesDetails_1 = __importDefault(require("../Models/chargesDetails"));
 const activeGame_1 = __importDefault(require("../Models/activeGame"));
+const game_1 = __importDefault(require("../Models/game"));
 const gameController = require('../Controllers/games');
 function formatMoney(amount, currencySymbol = "$") {
     const options = {
@@ -58,9 +59,11 @@ function zoneTimeChanged() {
     return torontoDate;
 }
 async function startGame(req, res) {
-    let gameInfo = await gameController.findGame(req.body.gameId);
-    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60, true);
+    const gameInfo = await game_1.default.findOne({ _id: req.body.gameId })
+        .populate('gameType')
+        .populate('location')
+        .exec();
+    let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60, true);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,
@@ -86,9 +89,11 @@ async function startGame(req, res) {
     }
 }
 async function startGameByMinute(req, res) {
-    let gameInfo = await gameController.findGame(req.body.gameId);
-    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType);
-    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0, false);
+    const gameInfo = await game_1.default.findOne({ _id: req.body.gameId })
+        .populate('gameType')
+        .populate('location')
+        .exec();
+    let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60, false);
     const startgame = new chargesDetails_1.default({
         game: gameInfo,
         amount: totalAmount,

@@ -116,12 +116,13 @@ function zoneTimeChanged() {
 async function startGame(req: any, res: any) {
 
 
-    let gameInfo = await gameController.findGame(req.body.gameId)
+    const gameInfo = await games.findOne({_id: req.body.gameId }) 
+    .populate('gameType')
+    .populate('location')
+    .exec()
+    
 
-    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
-
-    let totalAmount = getAmount(gameTypesDetails.pricePerHour, gameTypesDetails.pricePerMinute, 60,true)
-
+    let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60,true)
 
 
     const startgame = new chargeDetails({
@@ -169,11 +170,14 @@ async function startGame(req: any, res: any) {
 async function startGameByMinute(req: any, res: any) {
 
 
-    let gameInfo = await gameController.findGame(req.body.gameId)
+    const gameInfo = await games.findOne({_id: req.body.gameId }) 
+    .populate('gameType')
+    .populate('location')
+    .exec()
+    
 
-    let gameTypesDetails = await gameController.findGameType(gameInfo.gameType)
+    let totalAmount = getAmount(gameInfo.gameType.pricePerHour, gameInfo.gameType.pricePerMinute, 60,false)
 
-    let totalAmount = getAmount(gameTypesDetails.pricePerMinute, gameTypesDetails.pricePerMinute, 0, false)
 
 
     const startgame = new chargeDetails({
